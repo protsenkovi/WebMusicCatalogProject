@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+
+<faces-config version="2.0"
+              xmlns="http://java.sun.com/xml/ns/javaee" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+
+    <navigation-rule>
+        <from-view-id>/main.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>Edit</from-outcome>
+            <to-view-id>/edit.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>/edit.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>Main</from-outcome>
+            <to-view-id>/main.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <converter>
+        <converter-id>musicianConverterManagedBean</converter-id>
+        <converter-class>converters.MusicianConverterManagedBean</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>groupConverterManagedBean</converter-id>
+        <converter-class>converters.GroupConverterManagedBean</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>albumConverterManagedBean</converter-id>
+        <converter-class>converters.AlbumConverterManagedBean</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>moodConverterManagedBean</converter-id>
+        <converter-class>converters.MoodConverterManagedBean</converter-class>
+    </converter>
+
+    
+</faces-config>

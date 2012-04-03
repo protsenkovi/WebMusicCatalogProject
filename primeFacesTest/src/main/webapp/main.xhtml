@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251"/>
+        <title>Why are you not working?</title>
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/style.css" />
+        <style type="text/css">
+            .nestedUnit {
+                border:0px none !important;
+            }
+
+            .ui-layout-center .ui-layout-resizer {
+                border:1px solid #A8A8A8 !important;
+            }
+
+            body {
+                margin:50px 0px; padding:0px;
+                text-align:center;
+            }
+
+            .mainbody {
+                min-height: 600px;
+                height:auto;
+            }
+
+            .centered {
+                margin:0px auto;
+                text-align: center;
+            }
+
+            .table {
+                width: 300px;
+                height: auto;                
+            }
+
+            .title {
+                margin:5px auto; 
+                text-align: center;
+                font-size: 30pt;
+                font-family: Arial;
+            }
+        </style>
+    </h:head>
+
+    <h:body onload="#{controllerManagedBean.search()}">
+        <label style="margin:10px auto;text-align: center;font-size: 30pt;font-family: Arial;" >Web Music Catalog</label>
+        <h:form id="form" >
+            <p:layout>
+                <p:layoutUnit position="north" resizable="false" size="90" id="Head" >
+
+                    <h:panelGrid columns="2" cellpadding="5" styleClass="centered">
+                        <p:inputText id="search" size="60" value="#{controllerManagedBean.searchString}" />
+                        <p:commandButton value="Search" update="basictable" action="#{controllerManagedBean.search()}"/>
+                    </h:panelGrid>
+
+                </p:layoutUnit>
+
+                <p:layoutUnit id="Body" position="center" styleClass="mainbody" >
+                    <p:layout>
+                        <p:layoutUnit position="center"  resizable="true" styleClass="nestedUnit">
+
+                            <p:dataTable  id="basictable" var="row" value="#{controllerManagedBean.maintable}"  styleClass="table, centered"
+                                          selection="#{controllerManagedBean.selectedRow}" selectionMode="single" rowKey="#{row.trackId}"
+                                          >  
+                                <p:column id="modelHeader">  
+                                    <f:facet name="header">Group</f:facet>  
+                                    <h:outputText value="#{row.groupName}" />  
+                                </p:column>  
+
+                                <p:column>  
+                                    <f:facet name="header">Album</f:facet>  
+                                    <h:outputText value="#{row.albumName}" />  
+                                </p:column>  
+
+                                <p:column>  
+                                    <f:facet name="header">Track</f:facet>  
+                                    <h:outputText value="#{row.trackName}" />  
+                                </p:column>
+
+                                <p:column>  
+                                    <f:facet name="header">Rate</f:facet>  
+                                    <h:outputText value="#{row.avrrate}">
+                                        <f:convertNumber pattern = "##,##"/>
+                                    </h:outputText>  
+                                </p:column>
+
+                                <p:column>  
+                                    <f:facet name="header">Genre</f:facet>  
+                                    <h:outputText value="#{row.genreName}" />  
+                                </p:column>
+
+                                <p:column>  
+                                    <f:facet name="header">Mood</f:facet>  
+                                    <h:outputText value="#{row.moodName}" />  
+                                </p:column>
+
+                                <f:facet name="footer">  
+                                    <p:commandButton id="addTrackButton" value="Add Track" icon="ui-icon-squaresmall-plus"  
+                                                     update=":form:adddisplay" oncomplete="addDialog.show()" action="#{addDialogModelManagedBean.modeTrack()}"/>  
+                                    <p:commandButton id="editButton" value="Edit" icon="ui-icon-pencil"  
+                                                     action="#{controllerManagedBean.edit}" ajax="false"/> 
+                                </f:facet>
+                            </p:dataTable> 
+
+                        </p:layoutUnit>
+                    </p:layout>                                    
+                </p:layoutUnit>
+            </p:layout>
+
+            <p:dialog id="adddialog" header="Track Detail" widgetVar="addDialog" resizable="false" closable="false"
+                      width="600" height="400" showEffect="fade" hideEffect="fade" modal="true">  
+                <h:panelGrid id="adddisplay"  styleClass="nestedUnit"> 
+
+                    <p:panel id="trackPanel" header="Track #{addDialogModelManagedBean.track.name}" rendered="#{addDialogModelManagedBean.trackR}">  
+                        <h:panelGrid columns="2" style="width:100%">  
+                            <h:outputText value="Name"/>   
+                            <p:inputText id="trackNameInput" value="#{addDialogModelManagedBean.track.name}" />
+
+                            <h:outputText value="Album" /> 
+                            <p:autoComplete id="trackAlbums" dropdown="true" 
+                                            completeMethod="#{controllerManagedBean.completeAlbums}" 
+                                            value="#{addDialogModelManagedBean.album}"
+                                            var="a" itemLabel="#{a.name}" itemValue="#{a}"
+                                            converter="albumConverterManagedBean" 
+                                            forceSelection="true" immediate="true" required="true"/>
+
+                            <h:outputText value="Mood" /> 
+                            <p:autoComplete id="trackMood" dropdown="true" 
+                                            completeMethod="#{controllerManagedBean.completeMoods}" 
+                                            value="#{addDialogModelManagedBean.track.mood}"
+                                            var="a" itemLabel="#{a.name}" itemValue="#{a}"
+                                            converter="moodConverterManagedBean" 
+                                            forceSelection="true" immediate="true" required="true"/>
+                        </h:panelGrid>  
+                    </p:panel> 
+
+                    <p:panel id="commandPanel" name="footer"  >  
+                        <p:commandButton id="createButton" update="commandPanel" onclick="#{addDialogModelManagedBean.createTrackClicked()}" value="Create #{(!addDialogModelManagedBean.trackCreated)}" rendered="#{not addDialogModelManagedBean.trackCreated}"/>
+                        <p:commandButton id="updateButton"  value="Update #{addDialogModelManagedBean.trackCreated}" action="#{controllerManagedBean.updateTrack()}" rendered="#{addDialogModelManagedBean.trackCreated}"/>  
+                        <p:commandButton id="backButton" value="Back" oncomplete="addDialog.hide()" />  
+                    </p:panel>
+                </h:panelGrid>  
+            </p:dialog>
+
+        </h:form>            
+    </h:body>
+</html>

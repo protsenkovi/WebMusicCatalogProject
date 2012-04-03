@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251"/>
+        <title>Why are you not working?</title>
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/style.css" />
+        <style type="text/css">
+            .nestedUnit {
+                border:0px none !important;
+            }
+
+            .ui-layout-center .ui-layout-resizer {
+                border:1px solid #A8A8A8 !important;
+            }
+
+            body {
+                margin:50px 0px; padding:0px;
+                text-align:center;
+            }
+
+            .mainbody {
+                min-height: 600px;
+                height:auto;
+            }
+
+            .centered {
+                margin:0px auto;
+                text-align: center;
+            }
+
+            .table {
+                width: 300px;
+                height: auto;                
+            }
+
+            .title {
+                margin:5px auto; 
+                text-align: center;
+                font-size: 30pt;
+                font-family: Arial;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <label style="margin:10px auto;text-align: center;font-size: 30pt;font-family: Arial;" >Web Music Catalog : Edit Page</label>
+        <h:form id="form">
+            <p:panel styleClass="nestedUnit">
+                <p:panelGrid styleClass="nestedUnit" columns="1">
+                    <p:panel id="groupPanel" header="Group #{editPageViewManagedBean.group.name}">  
+                        <h:panelGrid columns="2" style="width:100%">  
+                            <h:outputText value="Name"/>   
+                            <p:inputText id="groupNameInput" value="#{editPageViewManagedBean.group.name}">
+                                <p:ajax event="keyup" update="albumGroups"/>
+                            </p:inputText>
+
+                            <h:outputText value="Musicians" />  
+                            <p:autoComplete id="membersAutoComplete" value="#{editPageViewManagedBean.group.members}" completeMethod="#{controllerManagedBean.completeMusician}" multiple="true"
+                                            var="member" itemLabel="#{member.name}" itemValue="#{member}" converter="musicianConverterManagedBean"
+                                            forceSelection="true" immediate="true"/> 
+                        </h:panelGrid>  
+                    </p:panel>
+
+                    <p:panel id="albumPanel" header="Album #{editPageViewManagedBean.album.name}" >  
+                        <h:panelGrid columns="2" style="width:100%">  
+                            <h:outputText value="Name"/>   
+                            <p:inputText id="albumNameInput" value="#{editPageViewManagedBean.album.name}" >
+                                <p:ajax event="keyup" update="trackAlbums"/>
+                            </p:inputText>
+
+                            <h:outputText value="Group" />  
+
+                            <p:autoComplete id="albumGroups" dropdown="true" 
+                                            completeMethod="#{controllerManagedBean.completeGroups}" 
+                                            value="#{editPageViewManagedBean.group}" 
+                                            var="g" itemLabel="#{g.name}" itemValue="#{g}"
+                                            converter="groupConverterManagedBean" 
+                                            forceSelection="true">
+                                <p:ajax event="itemSelect"  update="groupPanel" listener="#{editPageViewManagedBean.groupChanged}"/>
+                            </p:autoComplete>
+                        </h:panelGrid>  
+                    </p:panel>
+
+                    <p:panel id="trackPanel" header="Track #{editPageViewManagedBean.track.name}">  
+                        <h:panelGrid columns="2" style="width:100%">  
+                            <h:outputText value="Name"/>   
+                            <p:inputText id="trackNameInput" value="#{editPageViewManagedBean.track.name}"/>
+
+                            <h:outputText value="Album" />  
+
+                            <p:autoComplete id="trackAlbums" dropdown="true" 
+                                            completeMethod="#{controllerManagedBean.completeAlbums}" 
+                                            value="#{editPageViewManagedBean.album}"
+                                            var="a" itemLabel="#{a.name}" itemValue="#{a}"
+                                            converter="albumConverterManagedBean" 
+                                            forceSelection="true" immediate="true">
+                                <p:ajax event="itemSelect"  update="albumPanel groupPanel" listener="#{editPageViewManagedBean.albumChanged}"/>
+                            </p:autoComplete>
+
+                            <h:outputText value="Mood" /> 
+                            <p:autoComplete id="trackMood" dropdown="true" 
+                                            completeMethod="#{controllerManagedBean.completeMoods}" 
+                                            value="#{editPageViewManagedBean.track.mood}"
+                                            var="a" itemLabel="#{a.name}" itemValue="#{a}"
+                                            converter="moodConverterManagedBean" 
+                                            forceSelection="true" immediate="true"/>
+
+                            <h:outputText value="AvgRate"/>   
+                            <h:outputText id="trackAvgRateLabel" value="#{editPageViewManagedBean.track.avgrate}"/>
+                        </h:panelGrid>  
+                    </p:panel>
+
+                    <p:panelGrid >
+                        <p:row>
+                            <p:column colspan="2"><p:messages/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:commandButton value="Back" action="Main" ajax="false" />
+                                <p:commandButton id="saveButton" type="submit" value="Save" action="#{controllerManagedBean.save()}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>
