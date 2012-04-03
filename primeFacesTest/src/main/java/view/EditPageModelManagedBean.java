@@ -5,6 +5,7 @@
 package view;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
@@ -15,6 +16,7 @@ import javax.inject.Named;
 import logic.ControllerManagedBean;
 import org.primefaces.component.autocomplete.AutoComplete;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 
 /**
@@ -77,5 +79,31 @@ public class EditPageModelManagedBean implements Serializable {
     public void groupChanged(SelectEvent event) {
         Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU groupChanged ");
         group = (GroupModelManagedBean) event.getObject();
+    }
+    
+    public void membersDeleted(UnselectEvent event) {
+        group.getMembers().remove((MusicianModel)event.getObject());
+        Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU membersDeleted {0}", group.getMembers());
+    }
+    
+    public void membersAdded(SelectEvent event) {
+        group.getMembers().add((MusicianModel)event.getObject());
+        Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU membersAdded {0}", group.getMembers());
+    }
+    
+    public List<MusicianModel> completeMusicians(String query) {
+        return controllerManagedBean.completeMusician(query, group.getMembers());
+    }
+    
+    public List<GroupModelManagedBean> completeGroups(String query) {
+        return controllerManagedBean.completeGroups(query, group);
+    }
+    
+    public List<AlbumModelManagedBean> completeAlbums(String query) {
+        return controllerManagedBean.completeAlbums(query, album);
+    }
+    
+    public List<MoodModel> completeMoods(String query) {
+        return controllerManagedBean.completeMoods(query, track.getMood());
     }
 }

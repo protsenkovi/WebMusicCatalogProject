@@ -63,9 +63,12 @@ and open the template in the editor.
                             </p:inputText>
 
                             <h:outputText value="Musicians" />  
-                            <p:autoComplete id="membersAutoComplete" value="#{editPageViewManagedBean.group.members}" completeMethod="#{controllerManagedBean.completeMusician}" multiple="true"
+                            <p:autoComplete id="membersAutoComplete" value="#{editPageViewManagedBean.group.members}" completeMethod="#{editPageViewManagedBean.completeMusicians}" multiple="true"
                                             var="member" itemLabel="#{member.name}" itemValue="#{member}" converter="musicianConverterManagedBean"
-                                            forceSelection="true" immediate="true"/> 
+                                            forceSelection="true" immediate="true" >
+                                <p:ajax event="itemSelect" listener="#{editPageViewManagedBean.membersAdded}"/>
+                                <p:ajax event="itemUnselect" listener="#{editPageViewManagedBean.membersDeleted}"/>
+                            </p:autoComplete>
                         </h:panelGrid>  
                     </p:panel>
 
@@ -79,7 +82,7 @@ and open the template in the editor.
                             <h:outputText value="Group" />  
 
                             <p:autoComplete id="albumGroups" dropdown="true" 
-                                            completeMethod="#{controllerManagedBean.completeGroups}" 
+                                            completeMethod="#{editPageViewManagedBean.completeGroups}" 
                                             value="#{editPageViewManagedBean.group}" 
                                             var="g" itemLabel="#{g.name}" itemValue="#{g}"
                                             converter="groupConverterManagedBean" 
@@ -97,7 +100,7 @@ and open the template in the editor.
                             <h:outputText value="Album" />  
 
                             <p:autoComplete id="trackAlbums" dropdown="true" 
-                                            completeMethod="#{controllerManagedBean.completeAlbums}" 
+                                            completeMethod="#{editPageViewManagedBean.completeAlbums}" 
                                             value="#{editPageViewManagedBean.album}"
                                             var="a" itemLabel="#{a.name}" itemValue="#{a}"
                                             converter="albumConverterManagedBean" 
@@ -107,7 +110,7 @@ and open the template in the editor.
 
                             <h:outputText value="Mood" /> 
                             <p:autoComplete id="trackMood" dropdown="true" 
-                                            completeMethod="#{controllerManagedBean.completeMoods}" 
+                                            completeMethod="#{editPageViewManagedBean.completeMoods}" 
                                             value="#{editPageViewManagedBean.track.mood}"
                                             var="a" itemLabel="#{a.name}" itemValue="#{a}"
                                             converter="moodConverterManagedBean" 

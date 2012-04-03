@@ -5,7 +5,9 @@
 package converters;
 
 import com.mycompany.bmp.*;
+import java.io.StringReader;
 import java.rmi.RemoteException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.FinderException;
@@ -20,7 +22,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 import view.MoodModel;
-import view.MusicianModelManagedBean;
+import view.MusicianModel;
 
 /**
  *
@@ -41,29 +43,12 @@ public class MoodConverterManagedBean implements Converter {
         Logger.getLogger(MoodConverterManagedBean.class.getName()).log(Level.INFO, "VLEU CONVERTER Mood input value of Mood converter = {0}", value);
         if (value.trim().equals("")) {
             return null;
-        } else {
-            try {
-                int key = Integer.parseInt(value);
-
-                InitialContext ic = new InitialContext();
-                Object obj = ic.lookup("ejb/MoodBean");
-                MoodBeanRemoteHome moodHome = (MoodBeanRemoteHome) PortableRemoteObject.narrow(obj, MoodBeanRemoteHome.class);
-                if (moodHome != null) {
-                    Mood mood = (Mood) moodHome.findByPrimaryKey(key);
-                    Logger.getLogger(MoodConverterManagedBean.class.getName()).log(Level.INFO, "VLEU CONVERTER Mood with id = {0} found.", mood.getId());
-                    return new MoodModel(mood.getId(), mood.getName());
-                }                
-            } catch (NumberFormatException exception) {
-                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid group"));
-            } catch (NamingException ex) {
-                Logger.getLogger(MoodConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (FinderException ex) {
-                Logger.getLogger(MoodConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (RemoteException ex) {
-                Logger.getLogger(MoodConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
-        return null;
+        Scanner scanner = new Scanner(new StringReader(value)); 
+        scanner.useDelimiter("<:>");
+        int id = scanner.nextInt();
+        String name = scanner.next();
+        return new MoodModel(id, name);
     }
 
     @Override
@@ -72,7 +57,7 @@ public class MoodConverterManagedBean implements Converter {
         if (value == null || value.equals("")) {
             return "";
         } else {
-            return String.valueOf(((MoodModel) value).getValue());
+            return "" + ((MoodModel) value).getValue() + "<:>" + ((MoodModel) value).getName() + "<:>";
         }
     }
 }

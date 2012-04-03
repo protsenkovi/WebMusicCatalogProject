@@ -8,7 +8,9 @@ import com.mycompany.bmp.Group;
 import com.mycompany.bmp.GroupBeanRemoteHome;
 import com.mycompany.bmp.Member;
 import com.mycompany.bmp.MemberBeanRemoteHome;
+import java.io.StringReader;
 import java.rmi.RemoteException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.FinderException;
@@ -22,7 +24,7 @@ import javax.faces.convert.ConverterException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
-import view.MusicianModelManagedBean;
+import view.MusicianModel;
 
 /**
  *
@@ -43,30 +45,13 @@ public class MusicianConverterManagedBean implements Converter {
         Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.INFO, "VLEU CONVERTER Musician input value of musician converter = {0}", value);
         if (value.trim().equals("")) {
             return null;
-        } else {
-            try {
-                long key = Long.parseLong(value);
-
-                InitialContext ic = new InitialContext();
-                Object obj = ic.lookup("ejb/MemberBean");
-                MemberBeanRemoteHome memberTableHome = (MemberBeanRemoteHome) PortableRemoteObject.narrow(obj, MemberBeanRemoteHome.class);
-                if (memberTableHome == null) {
-                    return null;
-                }
-                Member member = memberTableHome.findByPrimaryKey(key);
-                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.INFO, "VLEU CONVERTER Musician with id = {0} found.", member.getId());
-                return new MusicianModelManagedBean(member.getId(), member.getName(), member.getLink());
-            } catch (NumberFormatException exception) {
-                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid group"));
-            } catch (NamingException ex) {
-                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (FinderException ex) {
-                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (RemoteException ex) {
-                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return null;
+        } 
+        Scanner scanner = new Scanner(new StringReader(value)); 
+        scanner.useDelimiter("<:>");
+        int id = scanner.nextInt();
+        String name = scanner.next();
+        String link = scanner.next();
+        return new MusicianModel(id, name, link);
     }
 
     @Override
@@ -75,7 +60,9 @@ public class MusicianConverterManagedBean implements Converter {
         if (value == null || value.equals("")) {
             return "";
         } else {
-            return String.valueOf(((MusicianModelManagedBean) value).getId());
+            return "" + ((MusicianModel) value).getId() + "<:>"
+                      + ((MusicianModel) value).getName() + "<:>"
+                      + ((MusicianModel) value).getLink() + "<:>";
         }
     }
 }

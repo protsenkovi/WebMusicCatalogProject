@@ -21,9 +21,9 @@ public class GroupModelManagedBean implements Serializable {
     private long id;
     private String name;
 
-    private List<MusicianModelManagedBean> members;
+    private List<MusicianModel> members;
 
-    public GroupModelManagedBean(long id, String name, List<MusicianModelManagedBean> members) {
+    public GroupModelManagedBean(long id, String name, List<MusicianModel> members) {
         this.id = id;
         this.name = name;
         this.members = members;
@@ -35,14 +35,15 @@ public class GroupModelManagedBean implements Serializable {
         Logger.getLogger(GroupModelManagedBean.class.getName()).log(Level.INFO, "VLEU GroupModelSETTER Parameters: new ID:" + id);
     }
 
-    public void setMembers(List<MusicianModelManagedBean> members) {
-        this.members = members;
-        Logger.getLogger(GroupModelManagedBean.class.getName()).log(Level.INFO, "VLEU GroupModelSETTER Parameters:  members: " + members + " caller method" + sun.reflect.Reflection.getCallerClass(2));
-        StringBuilder trace = new StringBuilder();
-        for (int i = 0; i < 20; i++)
-            trace.append("-> " + sun.reflect.Reflection.getCallerClass(i));
-            Logger.getLogger(GroupModelManagedBean.class.getName()).log(Level.INFO, "VLEU GroupModelSETTER Caller method trace" + trace.toString());
-    }
+//    public void setMembers(List<MusicianModel> members) {
+//        if (!(sun.reflect.Reflection.getCallerClass(2).equals(javax.el.BeanELResolver.class)))
+//            this.members = members;
+//        Logger.getLogger(GroupModelManagedBean.class.getName()).log(Level.INFO, "VLEU GroupModelSETTER Parameters:  members: " + members + " caller method is resolver " + !(sun.reflect.Reflection.getCallerClass(2).equals(javax.el.BeanELResolver.class)));
+//        StringBuilder trace = new StringBuilder();
+//        for (int i = 0; i < 20; i++)
+//            trace.append("-> " + sun.reflect.Reflection.getCallerClass(i));
+//            Logger.getLogger(GroupModelManagedBean.class.getName()).log(Level.INFO, "VLEU GroupModelSETTER Caller method trace" + trace.toString());
+//    }
 
     public void setName(String name) {
         this.name = name;
@@ -52,7 +53,7 @@ public class GroupModelManagedBean implements Serializable {
         return id;
     }
 
-    public List<MusicianModelManagedBean> getMembers() {
+    public List<MusicianModel> getMembers() {
         return members;
     }
 
@@ -64,7 +65,7 @@ public class GroupModelManagedBean implements Serializable {
      * Creates a new instance of GroupModelManagedBean
      */
     public GroupModelManagedBean() {
-        members = new ArrayList<MusicianModelManagedBean>();
+        members = new ArrayList<MusicianModel>();
         Logger.getLogger(GroupModelManagedBean.class.getName()).log(Level.INFO, "VLEU GroupModelConstructor Default");
     }
     

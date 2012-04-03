@@ -4,15 +4,13 @@
  */
 package view;
 
-import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 
 /**
  *
  * @author Klaritin
  */
-public class MusicianModelManagedBean implements Serializable {
+public class MusicianModel implements Serializable {
     
     private long id;
     private String name;
@@ -33,7 +31,7 @@ public class MusicianModelManagedBean implements Serializable {
     /**
      * Creates a new instance of MusicianModelManagedBean
      */
-    public MusicianModelManagedBean() {
+    public MusicianModel() {
     }
 
     public long getId() {
@@ -48,7 +46,7 @@ public class MusicianModelManagedBean implements Serializable {
         return name;
     }
 
-    public MusicianModelManagedBean(long id, String name, String link) {
+    public MusicianModel(long id, String name, String link) {
         this.id = id;
         this.name = name;
         this.link = link;
@@ -58,6 +56,11 @@ public class MusicianModelManagedBean implements Serializable {
     public String toString() {
         return "id: " + id + " name: "+ name + " link " + link;
     }
-    
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof MusicianModel))
+            return false;        
+        return this.id == ((MusicianModel)obj).getId();
+    }
 }

@@ -48,36 +48,13 @@ public class AlbumConverterManagedBean implements Converter {
             return null;
         } 
         Scanner scanner = new Scanner(new StringReader(value)); 
-        scanner.useDelimiter(":");
+        scanner.useDelimiter("<:>");
         long id = scanner.nextLong();
         String name = scanner.next();
         long group = scanner.nextLong();
         long genre = scanner.nextLong();
         Logger.getLogger(AlbumConverterManagedBean.class.getName()).log(Level.INFO, "VLEU CONVERTER Album converted = {0}", "" + id + name + group + genre);
         return new AlbumModelManagedBean(id, name, group, genre);
-//        else {
-//            try {
-//                long key = Long.parseLong(value);
-//
-//                InitialContext ic = new InitialContext();
-//                Object obj = ic.lookup("ejb/AlbumBean");
-//                AlbumBeanRemoteHome albumHome = (AlbumBeanRemoteHome) PortableRemoteObject.narrow(obj, AlbumBeanRemoteHome.class);
-//                if (albumHome == null) {
-//                    return null;
-//                }
-//                Album album = albumHome.findByPrimaryKey(key);
-//                Logger.getLogger(AlbumConverterManagedBean.class.getName()).log(Level.INFO, "VLEU CONVERTER Album with id = {0} found.", album.getId());
-//                return new AlbumModelManagedBean(album.getId(), album.getName(), album.getGenre().longValue(), album.getGroup());
-//            } catch (NumberFormatException exception) {
-//                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid group"));
-//            } catch (NamingException ex) {
-//                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (FinderException ex) {
-//                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (RemoteException ex) {
-//                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
     }
 
     @Override
@@ -86,10 +63,10 @@ public class AlbumConverterManagedBean implements Converter {
         if (value == null || value.equals("")) {
             return "";
         } else {
-            return "" + ((AlbumModelManagedBean) value).getId() + ":" 
-                      + ((AlbumModelManagedBean) value).getName() + ":" 
-                      + ((AlbumModelManagedBean) value).getGroup() + ":"
-                      + ((AlbumModelManagedBean) value).getGenre();
+            return "" + ((AlbumModelManagedBean) value).getId() + "<:>" 
+                      + ((AlbumModelManagedBean) value).getName() + "<:>"
+                      + ((AlbumModelManagedBean) value).getGroup() + "<:>"
+                      + ((AlbumModelManagedBean) value).getGenre() + "<:>";
         }
     }
 }

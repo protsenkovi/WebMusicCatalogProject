@@ -143,8 +143,8 @@ public class AddDialogModelManagedBean implements Serializable {
     
     
     public void createTrackClicked() throws IOException {
-        controllerManagedBean.createTrack();
-        trackCreated = true;
+        //controllerManagedBean.createTrack();
+        //trackCreated = true;
         //Panel commandPanel = (Panel) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:commandPanel");
         //FacesContext context = FacesContext.getCurrentInstance();
         //Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU createTrackClicked Panel: " + commandPanel);

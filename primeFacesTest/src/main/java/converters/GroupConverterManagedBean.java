@@ -8,10 +8,12 @@ import com.mycompany.bmp.Group;
 import com.mycompany.bmp.GroupBeanRemoteHome;
 import com.mycompany.bmp.Member;
 import com.mycompany.bmp.MemberBeanRemoteHome;
+import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.FinderException;
@@ -26,7 +28,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 import view.GroupModelManagedBean;
-import view.MusicianModelManagedBean;
+import view.MusicianModel;
 
 /**
  *
@@ -47,39 +49,28 @@ public class GroupConverterManagedBean implements Converter {
         Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.INFO, "VLEU CONVERTER input value of group converter = {0}", value);
         if (value.trim().equals("")) {
             return null;
-        } else {
-            try {
-                long key = Long.parseLong(value);
-
-                InitialContext ic = new InitialContext();
-                Object obj = ic.lookup("ejb/GroupBean");
-                GroupBeanRemoteHome groupTableHome = (GroupBeanRemoteHome) PortableRemoteObject.narrow(obj, GroupBeanRemoteHome.class);
-                if (groupTableHome == null) {
-                    return null;
-                }
-                Group group = groupTableHome.findByPrimaryKey(key);
-                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.INFO, "VLEU CONVERTER Group with id = {0} found.", group.getId());
-                List<MusicianModelManagedBean> members = new ArrayList<MusicianModelManagedBean>();
-                obj = ic.lookup("ejb/MemberBean");
-                MemberBeanRemoteHome memberHome = (MemberBeanRemoteHome) PortableRemoteObject.narrow(obj, MemberBeanRemoteHome.class);
-                Collection memberst = memberHome.findByGroup(group.getId());
-                for (Object membert : memberst) {
-                    Member member = (Member) membert;
-                    members.add(new MusicianModelManagedBean(member.getId(), member.getName(), member.getLink()));
-                }
-                Logger.getGlobal().log(Level.INFO, "VLEU CONVERTER Group members {0}", members);
-                return new GroupModelManagedBean(group.getId(), group.getName(), members);
-            } catch (NumberFormatException exception) {
-                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid group"));
-            } catch (NamingException ex) {
-                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (FinderException ex) {
-                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (RemoteException ex) {
-                Logger.getLogger(MusicianConverterManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        Scanner scanner = new Scanner(new StringReader(value)); 
+        scanner.useDelimiter("<:>");
+        long id = scanner.nextLong();
+        String name = scanner.next();
+        String command = scanner.next();
+        List<MusicianModel> members = new ArrayList<MusicianModel>();
+        if ("list".equals(command)) {
+            long memberId;
+            String memberName;
+            String memberLink;
+            
+            while (scanner.hasNext()) {
+                memberId = scanner.nextLong();
+                memberName = scanner.next();
+                memberLink = scanner.next();
+                members.add(new MusicianModel(memberId, memberName, memberLink));
             }
         }
-        return null;
+        GroupModelManagedBean group = new GroupModelManagedBean(id, name, members);
+        Logger.getLogger(GroupConverterManagedBean.class.getName()).log(Level.INFO, "VLEU CONVERTER Album converted = {0}", group);
+        return group;
     }
 
     @Override
@@ -87,7 +78,17 @@ public class GroupConverterManagedBean implements Converter {
         if (value == null || value.equals("")) {
             return "";
         } else {
-            return String.valueOf(((GroupModelManagedBean) value).getId());
+            StringBuilder builder = new StringBuilder(); 
+            builder.append(((GroupModelManagedBean) value).getId()); builder.append("<:>");
+            builder.append(((GroupModelManagedBean) value).getName()); builder.append("<:>");
+            builder.append("list"); builder.append("<:>");
+            for (MusicianModel member : ((GroupModelManagedBean) value).getMembers()) {
+                builder.append(member.getId()); builder.append("<:>");
+                builder.append(member.getName()); builder.append("<:>");
+                builder.append(member.getLink()); builder.append("<:>");
+            }
+            Logger.getGlobal().log(Level.INFO, "VLEU CONVERTER Group getAsString {0}", builder);
+            return builder.toString();
         }
     }
 }
