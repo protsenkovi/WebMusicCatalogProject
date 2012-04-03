@@ -12,8 +12,6 @@ import java.io.Serializable;
  *
  * @author Klaritin
  */
-@Named(value = "musicianModelManagedBean")
-@SessionScoped
 public class MusicianModelManagedBean implements Serializable {
     
     private long id;

@@ -12,8 +12,6 @@ import java.io.Serializable;
  *
  * @author Klaritin
  */
-@Named(value = "trackModelManagedBean")
-@SessionScoped
 public class TrackModelManagedBean implements Serializable {
 
     private long id;

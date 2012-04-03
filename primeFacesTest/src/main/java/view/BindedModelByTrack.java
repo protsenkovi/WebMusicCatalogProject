@@ -12,8 +12,6 @@ import java.io.Serializable;
  *
  * @author Klaritin
  */
-@Named(value = "bindedModelByTrack")
-@SessionScoped
 public class BindedModelByTrack implements Serializable, Comparable {
 
 //группа | альбом | трек | средний рейтинг | настроение | жанр
