@@ -5,22 +5,18 @@
 package logic;
 
 import com.mycompany.bmp.*;
-import com.sun.faces.util.CollectionsUtils;
-import view.BindedModelByTrack;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.CreateException;
-import javax.ejb.EJB;
 import javax.ejb.FinderException;
-import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.view.facelets.FaceletContext;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
@@ -34,23 +30,23 @@ import view.*;
 @SessionScoped
 public class ControllerManagedBean implements Serializable {
 
-    private List<BindedModelByTrack> maintable;
-    private BindedModelByTrack selectedRow;
+    private List<BindedModel> maintable;
+    private BindedModel selectedRow;
     @Inject
     private EditPageModelManagedBean editPageViewManagedBean;
     @Inject
     private AddDialogModelManagedBean addDialogModelManagedBean;
     private String searchString;
 
-    public BindedModelByTrack getSelectedRow() {
+    public BindedModel getSelectedRow() {
         return selectedRow;
     }
 
-    public void setSelectedRow(BindedModelByTrack selectedRow) {
+    public void setSelectedRow(BindedModel selectedRow) {
         this.selectedRow = selectedRow;
     }
 
-    public List<BindedModelByTrack> getMaintable() {
+    public List<BindedModel> getMaintable() {
         return maintable;
     }
 
@@ -68,7 +64,7 @@ public class ControllerManagedBean implements Serializable {
     public ControllerManagedBean() {
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CONSTRUCTOR ControllerManagedBean!");
         searchString = "";
-        maintable = new ArrayList<BindedModelByTrack>();
+        maintable = new ArrayList<BindedModel>();
     }
 
     public void search() {
@@ -79,7 +75,7 @@ public class ControllerManagedBean implements Serializable {
             Object obj = ic.lookup("ejb/BindedTableBean");
             BindedTableBeanRemoteHome bindedTableHome = (BindedTableBeanRemoteHome) PortableRemoteObject.narrow(obj, BindedTableBeanRemoteHome.class);
             if (bindedTableHome == null) {
-                maintable.add(new BindedModelByTrack());
+                maintable.add(new BindedModel());
             } else {
                 Collection colByGroup = bindedTableHome.findByGroup(searchString);
                 Collection colByAlbum = bindedTableHome.findByAlbum(searchString);
@@ -95,7 +91,7 @@ public class ControllerManagedBean implements Serializable {
 
                 for (Object groupt : colByGroup) {
                     com.mycompany.bmp.BindedTable bt = (com.mycompany.bmp.BindedTable) groupt;
-                    maintable.add(new BindedModelByTrack(bt.getIdTrack(),
+                    maintable.add(new BindedModel(bt.getIdTrack(),
                             bt.getIdAlbum(),
                             bt.getIdGroup(),
                             bt.getIdGenre(),
@@ -145,15 +141,16 @@ public class ControllerManagedBean implements Serializable {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeMusician: alreadyChoosen: {0}", alreadyChoosen);
-        if (alreadyChoosen != null)
+        if (alreadyChoosen != null) {
             suggestions.removeAll(alreadyChoosen);
+        }
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeMusician: Final {0}", suggestions);
         return suggestions;
     }
 
-    public List<GroupModelManagedBean> completeGroups(String query, GroupModelManagedBean alreadyChoosen) {
+    public List<GroupModel> completeGroups(String query, GroupModel alreadyChoosen) {
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeGroups: Started!");
-        List<GroupModelManagedBean> suggestions = new ArrayList<GroupModelManagedBean>();
+        List<GroupModel> suggestions = new ArrayList<GroupModel>();
         try {
             InitialContext ic = new InitialContext();
             Object obj = ic.lookup("ejb/GroupBean");
@@ -176,7 +173,7 @@ public class ControllerManagedBean implements Serializable {
                         Member member = (Member) membert;
                         members.add(new MusicianModel(member.getId(), member.getName(), member.getLink()));
                     }
-                    suggestions.add(new GroupModelManagedBean(group.getId(), group.getName(), members));
+                    suggestions.add(new GroupModel(group.getId(), group.getName()));
                 }
             }
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeGroups: Ended!");
@@ -187,14 +184,15 @@ public class ControllerManagedBean implements Serializable {
         } catch (RemoteException ex) {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (alreadyChoosen != null)
+        if (alreadyChoosen != null) {
             suggestions.remove(alreadyChoosen);
+        }
         return suggestions;
     }
 
-    public List<AlbumModelManagedBean> completeAlbums(String query, AlbumModelManagedBean alreadyChoosen) {
+    public List<AlbumModel> completeAlbums(String query, AlbumModel alreadyChoosen) {
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeAlbums: Started!");
-        List<AlbumModelManagedBean> suggestions = new ArrayList<AlbumModelManagedBean>();
+        List<AlbumModel> suggestions = new ArrayList<AlbumModel>();
         try {
             InitialContext ic = new InitialContext();
             Object obj = ic.lookup("ejb/AlbumBean");
@@ -209,7 +207,7 @@ public class ControllerManagedBean implements Serializable {
 
                 for (Object albumt : col) {
                     com.mycompany.bmp.Album album = (com.mycompany.bmp.Album) albumt;
-                    suggestions.add(new AlbumModelManagedBean(album.getId(), album.getName(), album.getGenre().longValue(), album.getGroup())); //danger! not unified model creation
+                    suggestions.add(new AlbumModel(album.getId(), album.getName(), album.getGenre().longValue(), album.getGroup())); //danger! not unified model creation
                 }
             }
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeAlbums: Ended!");
@@ -220,11 +218,12 @@ public class ControllerManagedBean implements Serializable {
         } catch (RemoteException ex) {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (alreadyChoosen != null)
+        if (alreadyChoosen != null) {
             suggestions.remove(alreadyChoosen);
+        }
         return suggestions;
     }
-    
+
     public List<MoodModel> completeMoods(String query, MoodModel alreadyChoosen) {
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeMoods: Started!");
         List<MoodModel> suggestions = new ArrayList<MoodModel>();
@@ -243,7 +242,7 @@ public class ControllerManagedBean implements Serializable {
                 for (Object moodt : col) {
                     Mood mood = (Mood) moodt;
                     suggestions.add(new MoodModel(mood.getId(), mood.getName()));
-                }               
+                }
             }
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeMoods: Ended!");
         } catch (NamingException ex) {
@@ -253,8 +252,10 @@ public class ControllerManagedBean implements Serializable {
         } catch (RemoteException ex) {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (alreadyChoosen != null)
+        Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeMoods: alreadyChoosen: {0}", alreadyChoosen);
+        if (alreadyChoosen != null) {
             suggestions.remove(alreadyChoosen);
+        }
         return suggestions;
     }
 
@@ -267,15 +268,14 @@ public class ControllerManagedBean implements Serializable {
             GroupBeanRemoteHome groupHome = (GroupBeanRemoteHome) PortableRemoteObject.narrow(obj, GroupBeanRemoteHome.class);
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: groupHome = {0}", groupHome);
             if (groupHome != null) {
-                GroupModelManagedBean groupModel = editPageViewManagedBean.getGroup();
+                GroupModel groupModel = editPageViewManagedBean.getGroup();
                 Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: groupModel = {0}", groupModel);
                 Group group = groupHome.findByPrimaryKey(groupModel.getId());
                 Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: group = {0}", group.getId());
                 group.setName(groupModel.getName());
 
                 Collection membersIds = new Vector();
-                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: members = " + groupModel.getMembers().size());
-                for (MusicianModel member : groupModel.getMembers()) {
+                for (MusicianModel member : editPageViewManagedBean.getMembers()) {
                     Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: Group id: " + groupModel.getId() + " Member id: " + member.getId() + " name: " + member.getName() + " added to list");
                     membersIds.add(new Long(member.getId()));
                 }
@@ -289,7 +289,7 @@ public class ControllerManagedBean implements Serializable {
             AlbumBeanRemoteHome albumHome = (AlbumBeanRemoteHome) PortableRemoteObject.narrow(obj, AlbumBeanRemoteHome.class);
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: albumHome = {0}", albumHome);
             if (albumHome != null) {
-                AlbumModelManagedBean albumModel = editPageViewManagedBean.getAlbum();
+                AlbumModel albumModel = editPageViewManagedBean.getAlbum();
                 Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: albumModel = {0}", albumModel);
                 Album album = albumHome.findByPrimaryKey(albumModel.getId());
                 Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: album = {0}", album.getId());
@@ -304,13 +304,13 @@ public class ControllerManagedBean implements Serializable {
             TrackBeanRemoteHome trackHome = (TrackBeanRemoteHome) PortableRemoteObject.narrow(obj, TrackBeanRemoteHome.class);
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: trackHome = {0}", trackHome);
             if (trackHome != null) {
-                TrackModelManagedBean trackModel = editPageViewManagedBean.getTrack();
+                TrackModel trackModel = editPageViewManagedBean.getTrack();
                 Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: trackModel = {0}", trackModel);
                 Track track = trackHome.findByPrimaryKey(trackModel.getId());
                 Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: track = {0}", track.getId());
                 track.setName(trackModel.getName());
                 track.setAlbum(editPageViewManagedBean.getAlbum().getId());
-                track.setMood(trackModel.getMood().getValue());
+                track.setMood(editPageViewManagedBean.getMood().getValue());
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Track has not been saved!"));
             }
@@ -335,8 +335,8 @@ public class ControllerManagedBean implements Serializable {
             TrackBeanRemoteHome trackHome = (TrackBeanRemoteHome) PortableRemoteObject.narrow(obj, TrackBeanRemoteHome.class);
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: trackHome = {0}", trackHome);
             if (trackHome != null) {
-                TrackModelManagedBean trackModel = addDialogModelManagedBean.getTrack();
-                trackHome.create(trackModel.getName(), addDialogModelManagedBean.getAlbum().getId(), trackModel.getMood().getValue());
+                TrackModel trackModel = addDialogModelManagedBean.getTrack();
+                trackHome.create(trackModel.getName(), addDialogModelManagedBean.getAlbum().getId(), addDialogModelManagedBean.getMood().getValue());
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Track has not been created!"));
             }
@@ -349,25 +349,25 @@ public class ControllerManagedBean implements Serializable {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
     }
-    
+
     public void updateTrack() {
-                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: Started!");
+        Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: Started!");
         try {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: -------Saving track-------");
-            InitialContext ic = new InitialContext();            
+            InitialContext ic = new InitialContext();
             Object obj = ic.lookup("ejb/TrackBean");
             TrackBeanRemoteHome trackHome = (TrackBeanRemoteHome) PortableRemoteObject.narrow(obj, TrackBeanRemoteHome.class);
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: trackHome = {0}", trackHome);
             if (trackHome != null) {
-                TrackModelManagedBean trackModel = addDialogModelManagedBean.getTrack();
+                TrackModel trackModel = addDialogModelManagedBean.getTrack();
                 Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: trackModel = {0}", trackModel);
                 Track track = trackHome.findByPrimaryKey(trackModel.getId());
                 Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: track = {0}", track.getId());
                 track.setName(trackModel.getName());
                 track.setAlbum(addDialogModelManagedBean.getAlbum().getId());
-                track.setMood(trackModel.getMood().getValue());
+                track.setMood(addDialogModelManagedBean.getMood().getValue());
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Track has not been saved!"));
             }
@@ -382,7 +382,7 @@ public class ControllerManagedBean implements Serializable {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 //    @SuppressWarnings("unchecked")
 //    public static <T> T findBean(String beanName) {
 //        FacesContext context = FacesContext.getCurrentInstance();
@@ -407,7 +407,7 @@ public class ControllerManagedBean implements Serializable {
                     members.add(new MusicianModel(member.getId(), member.getName(), member.getLink()));
                 }
             }
-            
+
             obj = ic.lookup("ejb/MoodBean");
             MoodBeanRemoteHome moodHome = (MoodBeanRemoteHome) PortableRemoteObject.narrow(obj, MoodBeanRemoteHome.class);
             if (moodHome != null) {
@@ -424,12 +424,14 @@ public class ControllerManagedBean implements Serializable {
         if (editPageViewManagedBean == null) {
             Logger.getGlobal().log(Level.SEVERE, "VLEU editEntitys is null");
         }
-        GroupModelManagedBean group = new GroupModelManagedBean(selectedRow.getGroupid(), selectedRow.getGroupName(), members);
-        AlbumModelManagedBean album = new AlbumModelManagedBean(selectedRow.getAlbumId(), selectedRow.getAlbumName(), selectedRow.getGenreId(), group.getId());
-        TrackModelManagedBean track = new TrackModelManagedBean(selectedRow.getTrackId(), selectedRow.getTrackName(), moodModel, selectedRow.getAvrrate());
+        GroupModel group = new GroupModel(selectedRow.getGroupid(), selectedRow.getGroupName());
+        AlbumModel album = new AlbumModel(selectedRow.getAlbumId(), selectedRow.getAlbumName(), selectedRow.getGenreId(), group.getId());
+        TrackModel track = new TrackModel(selectedRow.getTrackId(), selectedRow.getTrackName(), moodModel.getValue(), selectedRow.getAvrrate());
         editPageViewManagedBean.setGroup(group);
         editPageViewManagedBean.setAlbum(album);
         editPageViewManagedBean.setTrack(track);
+        editPageViewManagedBean.setMembers(members);
+        editPageViewManagedBean.setMood(moodModel);
 
         Logger.getGlobal().log(Level.INFO, "VLEU Group created = {0}", group);
 
@@ -437,8 +439,8 @@ public class ControllerManagedBean implements Serializable {
         return "Edit";
     }
 
-    public GroupModelManagedBean getGroupModelById(long id) {
-        Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU getGroupModelByAlbumModel: Started!");
+    public GroupModel getGroupModelById(long id) {
+        Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU getGroupModelById: Started!");
         try {
             InitialContext ic = new InitialContext();
             Object obj = ic.lookup("ejb/GroupBean");
@@ -446,18 +448,10 @@ public class ControllerManagedBean implements Serializable {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: groupHome = {0}", groupHome);
             if (groupHome != null) {
                 Group group = groupHome.findByPrimaryKey(id);
-                List<MusicianModel> members = new ArrayList<MusicianModel>();
-                obj = ic.lookup("ejb/MemberBean");
-                MemberBeanRemoteHome memberHome = (MemberBeanRemoteHome) PortableRemoteObject.narrow(obj, MemberBeanRemoteHome.class);
-                Collection memberst = memberHome.findByGroup(group.getId());
-                for (Object membert : memberst) {
-                    Member member = (Member) membert;
-                    members.add(new MusicianModel(member.getId(), member.getName(), member.getLink()));
-                }
-                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU getGroupModelByAlbumModel: Ended !!!");
-                return new GroupModelManagedBean(group.getId(), group.getName(), members);
+                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU getGroupModelById: Ended !!!");
+                return new GroupModel(group.getId(), group.getName());
             }
-            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.WARNING, "VLEU getGroupModelByAlbumModel: Ended with null!!!");          
+            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.WARNING, "VLEU getGroupModelById: Ended with null!!!");
         } catch (NamingException ex) {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FinderException ex) {
@@ -465,6 +459,30 @@ public class ControllerManagedBean implements Serializable {
         } catch (RemoteException ex) {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;  
+        return null;
+    }
+
+    public List<MusicianModel> getMembersByGroupId(long id) {
+        Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU getMembersByGroupId: Started!");
+        try {
+            InitialContext ic = new InitialContext();
+            Object obj = ic.lookup("ejb/MemberBean");
+            MemberBeanRemoteHome memberHome = (MemberBeanRemoteHome) PortableRemoteObject.narrow(obj, MemberBeanRemoteHome.class);
+            List<MusicianModel> members = new ArrayList<MusicianModel>();
+            Collection memberst = memberHome.findByGroup(id);
+            for (Object membert : memberst) {
+                Member member = (Member) membert;
+                members.add(new MusicianModel(member.getId(), member.getName(), member.getLink()));
+            }
+            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU getMembersByGroupId: Ended !!!");
+            return members;
+        } catch (NamingException ex) {
+            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FinderException ex) {
+            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

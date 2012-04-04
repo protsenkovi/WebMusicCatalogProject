@@ -145,15 +145,15 @@ and open the template in the editor.
                                             completeMethod="#{controllerManagedBean.completeAlbums}" 
                                             value="#{addDialogModelManagedBean.album}"
                                             var="a" itemLabel="#{a.name}" itemValue="#{a}"
-                                            converter="albumConverterManagedBean" 
+                                            converter="albumConverter" 
                                             forceSelection="true" immediate="true" required="true"/>
 
                             <h:outputText value="Mood" /> 
                             <p:autoComplete id="trackMood" dropdown="true" 
                                             completeMethod="#{controllerManagedBean.completeMoods}" 
-                                            value="#{addDialogModelManagedBean.track.mood}"
+                                            value="#{addDialogModelManagedBean.mood}"
                                             var="a" itemLabel="#{a.name}" itemValue="#{a}"
-                                            converter="moodConverterManagedBean" 
+                                            converter="moodConverter" 
                                             forceSelection="true" immediate="true" required="true"/>
                         </h:panelGrid>  
                     </p:panel> 

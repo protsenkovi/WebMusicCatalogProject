@@ -26,23 +26,23 @@
     </navigation-rule>
     
     <converter>
-        <converter-id>musicianConverterManagedBean</converter-id>
-        <converter-class>converters.MusicianConverterManagedBean</converter-class>
+        <converter-id>musicianConverter</converter-id>
+        <converter-class>converters.MusicianConverter</converter-class>
     </converter>
     
     <converter>
-        <converter-id>groupConverterManagedBean</converter-id>
-        <converter-class>converters.GroupConverterManagedBean</converter-class>
+        <converter-id>groupConverter</converter-id>
+        <converter-class>converters.GroupConverter</converter-class>
     </converter>
     
     <converter>
-        <converter-id>albumConverterManagedBean</converter-id>
-        <converter-class>converters.AlbumConverterManagedBean</converter-class>
+        <converter-id>albumConverter</converter-id>
+        <converter-class>converters.AlbumConverter</converter-class>
     </converter>
     
     <converter>
-        <converter-id>moodConverterManagedBean</converter-id>
-        <converter-class>converters.MoodConverterManagedBean</converter-class>
+        <converter-id>moodConverter</converter-id>
+        <converter-class>converters.MoodConverter</converter-class>
     </converter>
 
     

@@ -63,11 +63,15 @@ and open the template in the editor.
                             </p:inputText>
 
                             <h:outputText value="Musicians" />  
-                            <p:autoComplete id="membersAutoComplete" value="#{editPageViewManagedBean.group.members}" completeMethod="#{editPageViewManagedBean.completeMusicians}" multiple="true"
-                                            var="member" itemLabel="#{member.name}" itemValue="#{member}" converter="musicianConverterManagedBean"
-                                            forceSelection="true" immediate="true" >
-                                <p:ajax event="itemSelect" listener="#{editPageViewManagedBean.membersAdded}"/>
-                                <p:ajax event="itemUnselect" listener="#{editPageViewManagedBean.membersDeleted}"/>
+                            <p:autoComplete id="membersAutoComplete" 
+                                            value="#{editPageViewManagedBean.members}" 
+                                            completeMethod="#{editPageViewManagedBean.completeMusicians}" 
+                                            var="member" itemLabel="#{member.name}" 
+                                            itemValue="#{member}" 
+                                            converter="musicianConverter"
+                                            forceSelection="true" immediate="true" multiple="true">
+                                <p:ajax event="itemUnselect" update="membersAutoComplete"/>
+                                <p:ajax event="itemSelect" update="membersAutoComplete"/>
                             </p:autoComplete>
                         </h:panelGrid>  
                     </p:panel>
@@ -85,7 +89,7 @@ and open the template in the editor.
                                             completeMethod="#{editPageViewManagedBean.completeGroups}" 
                                             value="#{editPageViewManagedBean.group}" 
                                             var="g" itemLabel="#{g.name}" itemValue="#{g}"
-                                            converter="groupConverterManagedBean" 
+                                            converter="groupConverter" 
                                             forceSelection="true">
                                 <p:ajax event="itemSelect"  update="groupPanel" listener="#{editPageViewManagedBean.groupChanged}"/>
                             </p:autoComplete>
@@ -103,7 +107,7 @@ and open the template in the editor.
                                             completeMethod="#{editPageViewManagedBean.completeAlbums}" 
                                             value="#{editPageViewManagedBean.album}"
                                             var="a" itemLabel="#{a.name}" itemValue="#{a}"
-                                            converter="albumConverterManagedBean" 
+                                            converter="albumConverter" 
                                             forceSelection="true" immediate="true">
                                 <p:ajax event="itemSelect"  update="albumPanel groupPanel" listener="#{editPageViewManagedBean.albumChanged}"/>
                             </p:autoComplete>
@@ -111,11 +115,12 @@ and open the template in the editor.
                             <h:outputText value="Mood" /> 
                             <p:autoComplete id="trackMood" dropdown="true" 
                                             completeMethod="#{editPageViewManagedBean.completeMoods}" 
-                                            value="#{editPageViewManagedBean.track.mood}"
+                                            value="#{editPageViewManagedBean.mood}"
                                             var="a" itemLabel="#{a.name}" itemValue="#{a}"
-                                            converter="moodConverterManagedBean" 
-                                            forceSelection="true" immediate="true"/>
-
+                                            converter="moodConverter" 
+                                            forceSelection="true" immediate="true">
+                                <p:ajax event="itemSelect" update="trackMood"/>
+                            </p:autoComplete>
                             <h:outputText value="AvgRate"/>   
                             <h:outputText id="trackAvgRateLabel" value="#{editPageViewManagedBean.track.avgrate}"/>
                         </h:panelGrid>  

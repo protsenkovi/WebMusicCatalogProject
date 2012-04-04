@@ -42,4 +42,11 @@ public class MoodModel implements Serializable{
     public String toString() {
         return "value: " + value + " name:" + name;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof MoodModel))
+            return false;        
+        return this.value == ((MoodModel)obj).getValue();
+    }
 }

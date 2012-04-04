@@ -4,26 +4,13 @@
  */
 package view;
 
-import com.mycompany.bmp.Mood;
-import com.mycompany.bmp.MoodBeanRemoteHome;
 import java.io.IOException;
-import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.FinderException;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.rmi.PortableRemoteObject;
+import javax.inject.Named;
 import logic.ControllerManagedBean;
-import org.primefaces.component.panel.Panel;
 
 
 /**
@@ -35,15 +22,16 @@ import org.primefaces.component.panel.Panel;
 public class AddDialogModelManagedBean implements Serializable {
 
     public static enum Mode {
-
         track, album, group
     }
     
     @Inject
     private ControllerManagedBean controllerManagedBean;
-    private GroupModelManagedBean group;
-    private AlbumModelManagedBean album;
-    private TrackModelManagedBean track;
+    private List<MusicianModel> members;
+    private GroupModel group;
+    private AlbumModel album;
+    private TrackModel track;
+    private MoodModel mood;
     private boolean trackCreated;
     private boolean albumCreated;
     private boolean groupCreated;
@@ -86,31 +74,31 @@ public class AddDialogModelManagedBean implements Serializable {
      * Creates a new instance of AddDialogModelManagedBean
      */
     public AddDialogModelManagedBean() {
-        track = new TrackModelManagedBean(0, "", new MoodModel(-1, ""), -1);
-        album = new AlbumModelManagedBean(-1, "", -1, -1);
+        track = new TrackModel(0, "", -1, -1);
+        album = new AlbumModel(-1, "", -1, -1);
     }
 
-    public AlbumModelManagedBean getAlbum() {
+    public AlbumModel getAlbum() {
         return album;
     }
 
-    public void setAlbum(AlbumModelManagedBean album) {
+    public void setAlbum(AlbumModel album) {
         this.album = album;
     }
 
-    public GroupModelManagedBean getGroup() {
+    public GroupModel getGroup() {
         return group;
     }
 
-    public void setGroup(GroupModelManagedBean group) {
+    public void setGroup(GroupModel group) {
         this.group = group;
     }
 
-    public TrackModelManagedBean getTrack() {
+    public TrackModel getTrack() {
         return track;
     }
 
-    public void setTrack(TrackModelManagedBean track) {
+    public void setTrack(TrackModel track) {
         this.track = track;
     }
 
@@ -140,8 +128,23 @@ public class AddDialogModelManagedBean implements Serializable {
     public boolean isGroupR() {
         return mode == Mode.group;
     }
-    
-    
+
+    public List<MusicianModel> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<MusicianModel> members) {
+        this.members = members;
+    }
+
+    public MoodModel getMood() {
+        return mood;
+    }
+
+    public void setMood(MoodModel mood) {
+        this.mood = mood;
+    }
+        
     public void createTrackClicked() throws IOException {
         //controllerManagedBean.createTrack();
         //trackCreated = true;
