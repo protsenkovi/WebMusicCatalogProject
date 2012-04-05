@@ -13,7 +13,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
-import view.AlbumModel;
+import models.entitys.AlbumModel;
 
 /**
  *

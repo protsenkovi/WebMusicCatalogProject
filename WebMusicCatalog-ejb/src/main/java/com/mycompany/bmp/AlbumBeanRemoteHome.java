@@ -16,7 +16,7 @@ import javax.ejb.FinderException;
  */
 public interface AlbumBeanRemoteHome extends EJBHome {
 
-    com.mycompany.bmp.Album create(Long id, String name, Long groupId, Long genreId)  throws RemoteException,CreateException;
+    com.mycompany.bmp.Album create(String name, long groupId, long genreId)  throws RemoteException,CreateException;
 
     Long add()  throws  RemoteException;
     Long delete(java.lang.Long key)  throws  RemoteException;

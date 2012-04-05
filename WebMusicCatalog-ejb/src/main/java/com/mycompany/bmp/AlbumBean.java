@@ -305,16 +305,25 @@ public class AlbumBean implements EntityBean {
         }
     }
 
-    public void ejbCreate(Long id, String name, Long groupId, Long genreId) {
+    public Long ejbCreate(String name, long groupId, long genreId) {
         Connection connection = null;
         Statement statement = null;
-        String query = "INSERT INTO albums (id, name, group, genre) "
-                + "VALUES (" + id.longValue() + ", '" + name + "'," + groupId.longValue() + ", " + genreId.longValue();
+        String query = "";
         try {
             connection = dataSource.getConnection();
             statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
+            query = "SELECT album_id.NEXTVAL FROM dual";
+            ResultSet result = statement.executeQuery(query);
+            if (result.next()) {
+                long newId = result.getLong(1);
+                Logger.getLogger(AlbumBean.class.getName()).log(Level.INFO, "VLEU AlbumBean ejbCreate newId: " + newId + "Executed query: " + query);
+                query = "INSERT INTO albums (id, name, group, genre) "
+                      + "VALUES (" + newId + ", '" + name + "' ," + groupId + ", " + genreId + ")";
+                statement.executeQuery(query);
+                connection.commit();
+                return Long.valueOf(newId);
+            }
+            return null;
         } catch (SQLException e) {
             throw new EJBException("Ошибка Create\n query = " + query + "\n" + e.getMessage());
         } finally {
@@ -322,6 +331,9 @@ public class AlbumBean implements EntityBean {
         }
     }
 
-    public void ejbPostCreate(Long id, String name, Long groupId, Long genreId) {
+    public void ejbPostCreate(String name, long groupId, long genreId) {
+        this.name = name;
+        this.group = groupId;
+        this.genre = genreId;
     }
 }

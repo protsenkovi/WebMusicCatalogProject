@@ -330,10 +330,10 @@ public class TrackBean implements EntityBean {
             query = "SELECT track_id.NEXTVAL FROM dual";
             ResultSet result = statement.executeQuery(query);
             if (result.next()) {
-                int newId = result.getInt(1);
+                long newId = result.getLong(1);
                 Logger.getLogger(TrackBean.class.getName()).log(Level.INFO, "VLEU TrackBean ejbCreate newId: " + newId + "Executed query: " + query);
                 query = "INSERT INTO tracks (id, name, album, mood) "
-                        + "VALUES (" + newId + ", '" + name + "' ," + albumId.longValue() + ", " + mood.intValue() + ")";
+                      + "VALUES (" + newId + ", '" + name + "' ," + albumId.longValue() + ", " + mood.intValue() + ")";
                 statement.executeQuery(query);
                 connection.commit();
                 return Long.valueOf(newId);
