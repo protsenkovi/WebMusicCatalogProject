@@ -29,10 +29,6 @@ import sun.rmi.runtime.Log;
 @SessionScoped
 public class AddDialogModelManagedBean implements Serializable {
 
-    public static enum Mode {
-
-        track, album, group
-    }
     @Inject
     private ControllerManagedBean controllerManagedBean;
     private List<MusicianModel> members;
@@ -41,18 +37,60 @@ public class AddDialogModelManagedBean implements Serializable {
     private TrackModel track;
     private MoodModel mood;
     private GenreModel genre;
+    private MusicianModel musician;
     private boolean trackCreated;
     private boolean albumCreated;
     private boolean groupCreated;
     private boolean moodCreated;
-    
-    
+    private boolean genreCreated;
+    private boolean memberCreated;
     private boolean trackCreate;
     private boolean albumCreate;
     private boolean groupCreate;
     private boolean moodCreate;
     private boolean memberCreate;
+    private boolean genreCreate;
     private boolean showed;
+
+    public MusicianModel getMusician() {
+        return musician;
+    }
+
+    public void setMusician(MusicianModel musician) {
+        this.musician = musician;
+    }
+    
+    public boolean isGenreCreate() {
+        return genreCreate;
+    }
+
+    public void setGenreCreate(boolean genreCreate) {
+        this.genreCreate = genreCreate;
+    }
+
+    public boolean isGenreCreated() {
+        return genreCreated;
+    }
+
+    public void setGenreCreated(boolean genreCreated) {
+        this.genreCreated = genreCreated;
+    }
+
+    public boolean isMemberCreate() {
+        return memberCreate;
+    }
+
+    public void setMemberCreate(boolean memberCreate) {
+        this.memberCreate = memberCreate;
+    }
+
+    public boolean isMemberCreated() {
+        return memberCreated;
+    }
+
+    public void setMemberCreated(boolean memberCreated) {
+        this.memberCreated = memberCreated;
+    }
 
     public boolean isMoodCreated() {
         return moodCreated;
@@ -61,7 +99,7 @@ public class AddDialogModelManagedBean implements Serializable {
     public void setMoodCreated(boolean moodCreated) {
         this.moodCreated = moodCreated;
     }
-  
+
     public boolean isAlbumCreate() {
         return albumCreate;
     }
@@ -170,6 +208,7 @@ public class AddDialogModelManagedBean implements Serializable {
     }
 
     public void modeTrack() {
+        resetFlags();
         trackCreate = true;
         if (!showed) {
             track = new TrackModel(0, "", -1, -1);
@@ -178,20 +217,31 @@ public class AddDialogModelManagedBean implements Serializable {
             group = new GroupModel(-1, "");
             showed = true;
         }
-        albumCreate = false;
-        groupCreate = false;
-        trackCreated = false;
-        albumCreated = false;
-        groupCreated = false;
         Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU modeTrack mode ={0}", "showed:" + showed);
     }
 
     public void modeAlbum() {
+        resetFlags();
         albumCreate = true;
+        if (!showed) {
+            track = new TrackModel(0, "", -1, -1);
+            album = new AlbumModel(-1, "", -1, -1);
+            mood = new MoodModel(-1, "");
+            group = new GroupModel(-1, "");
+            showed = true;
+        }
     }
 
     public void modeGroup() {
+        resetFlags();
         groupCreate = true;
+        if (!showed) {
+            track = new TrackModel(0, "", -1, -1);
+            album = new AlbumModel(-1, "", -1, -1);
+            mood = new MoodModel(-1, "");
+            group = new GroupModel(-1, "");
+            showed = true;
+        }
     }
 
     public boolean createTrackP() {
@@ -209,6 +259,14 @@ public class AddDialogModelManagedBean implements Serializable {
 
     public boolean createMoodP() {
         return moodCreate;
+    }
+
+    public boolean createGenreP() {
+        return genreCreate;
+    }
+
+    public boolean createMusicianP() {
+        return memberCreate;
     }
 
     public List<MusicianModel> getMembers() {
@@ -272,7 +330,7 @@ public class AddDialogModelManagedBean implements Serializable {
     public void newGroupEventHandler() {
         groupCreate = true;
     }
-    
+
     public void newMemberEventHandler() {
         memberCreate = true;
     }
@@ -301,14 +359,40 @@ public class AddDialogModelManagedBean implements Serializable {
     }
 
     public String getCreateUpdateButtonName() {
-        if ((trackCreate && trackCreated) && (albumCreate && albumCreated) && (groupCreate && groupCreated)) {
+        if ((trackCreate && trackCreated)
+                && (albumCreate && albumCreated)
+                && (groupCreate && groupCreated)
+                && (moodCreate && moodCreated)
+                && (memberCreate && memberCreated)
+                && (genreCreate && genreCreated)) {
             return "Update";
         } else {
-            if ((trackCreate && trackCreated) || (albumCreate && albumCreated) || (groupCreate && groupCreated)) {
+            if ((trackCreate && trackCreated)
+                    && (albumCreate && albumCreated)
+                    && (groupCreate && groupCreated)
+                    && (moodCreate && moodCreated)
+                    && (memberCreate && memberCreated)
+                    && (genreCreate && genreCreated)) {
                 return "Create and Update";
-            }
-            else 
+            } else {
                 return "Create";
+            }
         }
+    }
+
+    private void resetFlags() {
+        trackCreate = false;
+        albumCreate = false;
+        groupCreate = false;
+        genreCreate = false;
+        moodCreate = false;
+        memberCreate = false;
+
+        trackCreated = false;
+        albumCreated = false;
+        groupCreated = false;
+        genreCreated = false;
+        moodCreated = false;
+        memberCreated = false;
     }
 }

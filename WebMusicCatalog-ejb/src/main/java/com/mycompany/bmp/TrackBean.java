@@ -336,6 +336,7 @@ public class TrackBean implements EntityBean {
                       + "VALUES (" + newId + ", '" + name + "' ," + albumId.longValue() + ", " + mood.intValue() + ")";
                 statement.executeQuery(query);
                 connection.commit();
+                this.id = newId; //????? Bean life cycle misunderstanding!
                 return Long.valueOf(newId);
             }
             return null;

@@ -39,7 +39,7 @@ import models.entitys.*;
 public class ControllerManagedBean implements Serializable {
 
     private List<BindedModel> maintable;
-    private BindedModel selectedRow;
+    private List<BindedModel> selectedRows;
     @Inject
     private EditPageModelManagedBean editPageViewManagedBean;
     @Inject
@@ -47,11 +47,20 @@ public class ControllerManagedBean implements Serializable {
     private String searchString;
 
     public BindedModel getSelectedRow() {
-        return selectedRow;
+        return selectedRows.get(0);
     }
 
     public void setSelectedRow(BindedModel selectedRow) {
-        this.selectedRow = selectedRow;
+        this.selectedRows.clear();
+        this.selectedRows.add(selectedRow);
+    }
+
+    public List<BindedModel> getSelectedRows() {
+        return selectedRows;
+    }
+
+    public void setSelectedRows(List<BindedModel> selectedRows) {
+        this.selectedRows = selectedRows;
     }
 
     public List<BindedModel> getMaintable() {
@@ -450,7 +459,7 @@ public class ControllerManagedBean implements Serializable {
 //    }
     public String edit() {
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU EDIT: Started!");
-        if (selectedRow == null) {
+        if (selectedRows == null) {
             return "";
         }
         List<MusicianModel> members = new ArrayList<MusicianModel>();
@@ -460,7 +469,7 @@ public class ControllerManagedBean implements Serializable {
             Object obj = ic.lookup("ejb/MemberBean");
             MemberBeanRemoteHome memberHome = (MemberBeanRemoteHome) PortableRemoteObject.narrow(obj, MemberBeanRemoteHome.class);
             if (memberHome != null) {
-                Collection col = memberHome.findByGroup(selectedRow.getGroupid());
+                Collection col = memberHome.findByGroup(selectedRows.get(0).getGroupid());
                 for (Object membert : col) {
                     com.mycompany.bmp.Member member = (com.mycompany.bmp.Member) membert;
                     Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU EDIT: Member {0}  ", member.getName());
@@ -471,7 +480,7 @@ public class ControllerManagedBean implements Serializable {
             obj = ic.lookup("ejb/MoodBean");
             MoodBeanRemoteHome moodHome = (MoodBeanRemoteHome) PortableRemoteObject.narrow(obj, MoodBeanRemoteHome.class);
             if (moodHome != null) {
-                Mood mood = (Mood) moodHome.findByPrimaryKey(selectedRow.getMood());
+                Mood mood = (Mood) moodHome.findByPrimaryKey(selectedRows.get(0).getMood());
                 moodModel = new MoodModel(mood.getId(), mood.getName());
             }
         } catch (NamingException ex) {
@@ -484,9 +493,9 @@ public class ControllerManagedBean implements Serializable {
         if (editPageViewManagedBean == null) {
             Logger.getGlobal().log(Level.SEVERE, "VLEU editEntitys is null");
         }
-        GroupModel group = new GroupModel(selectedRow.getGroupid(), selectedRow.getGroupName());
-        AlbumModel album = new AlbumModel(selectedRow.getAlbumId(), selectedRow.getAlbumName(), selectedRow.getGenreId(), group.getId());
-        TrackModel track = new TrackModel(selectedRow.getTrackId(), selectedRow.getTrackName(), moodModel.getValue(), selectedRow.getAvrrate());
+        GroupModel group = new GroupModel(selectedRows.get(0).getGroupid(), selectedRows.get(0).getGroupName());
+        AlbumModel album = new AlbumModel(selectedRows.get(0).getAlbumId(), selectedRows.get(0).getAlbumName(), selectedRows.get(0).getGenreId(), group.getId());
+        TrackModel track = new TrackModel(selectedRows.get(0).getTrackId(), selectedRows.get(0).getTrackName(), moodModel.getValue(), selectedRows.get(0).getAvrrate());
         editPageViewManagedBean.setGroup(group);
         editPageViewManagedBean.setAlbum(album);
         editPageViewManagedBean.setTrack(track);

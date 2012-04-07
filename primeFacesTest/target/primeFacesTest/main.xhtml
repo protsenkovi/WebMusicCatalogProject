@@ -84,8 +84,7 @@ and open the template in the editor.
                         <p:layoutUnit position="center"  resizable="true" styleClass="nestedUnit">
 
                             <p:dataTable  id="basictable" var="row" value="#{controllerManagedBean.maintable}"  styleClass="table, centered"
-                                          selection="#{controllerManagedBean.selectedRow}" selectionMode="single" rowKey="#{row.trackId}"
-                                          >  
+                                          selection="#{controllerManagedBean.selectedRows}" selectionMode="multiple" rowKey="#{row.trackId}">  
                                 <p:column id="modelHeader">  
                                     <f:facet name="header">Group</f:facet>  
                                     <h:outputText value="#{row.groupName}" />  
@@ -144,7 +143,7 @@ and open the template in the editor.
                                 <h:column colspan="2">
                                     <p:inputText id="trackNameInput" value="#{addDialogModelManagedBean.track.name}" />
                                 </h:column>
-                            <h:column></h:column>
+                                <h:column/>
 
 
 
@@ -152,13 +151,13 @@ and open the template in the editor.
                                     <h:outputText value="Album" /> 
                                 </h:column>
                                 <h:column>
-                                    <p:autoComplete id="trackAlbums" dropdown="true" 
+                                    <p:autoComplete id="trackAlbum" dropdown="true" 
                                                     completeMethod="#{addDialogModelManagedBean.completeAlbums}" 
                                                     value="#{addDialogModelManagedBean.album}"
                                                     var="a" itemLabel="#{a.name}" itemValue="#{a}"
                                                     converter="albumConverter" 
                                                     forceSelection="true" immediate="true" required="true">
-                                        <p:ajax event="itemSelect" update="trackAlbums"/>
+                                        <p:ajax event="itemSelect" update="trackAlbum"/>
                                     </p:autoComplete>
                                 </h:column>
                                 <h:column>
@@ -188,53 +187,48 @@ and open the template in the editor.
                     </p:panel> 
 
                     <p:panel id="albumPanel" header="Album #{addDialogModelManagedBean.album.name}" rendered="#{addDialogModelManagedBean.createAlbumP()}">  
-                        <h:panelGrid columns="3" style="width:100%">  
-                            <p:row>
-                                <p:column>
+                        <h:panelGrid columns="3" style="width:100%"> 
+                                <h:column>
                                     <h:outputText value="Name"/>   
-                                </p:column>
-                                <p:column colspan="2">
+                                </h:column>
+                                <h:column >
                                     <p:inputText id="albumNameInput" value="#{addDialogModelManagedBean.album.name}" />
-                                </p:column>
-                            </p:row>
+                                </h:column>
+                                <h:column/>
 
-                            <p:row>
-                                <p:column>
-                                    <h:outputText value="Album" /> 
-                                </p:column>
-                                <p:column>
+                                <h:column>
+                                    <h:outputText value="Group" /> 
+                                </h:column>
+                                <h:column>
                                     <p:autoComplete id="albumGroup" dropdown="true" 
                                                     completeMethod="#{addDialogModelManagedBean.completeGroups}" 
                                                     value="#{addDialogModelManagedBean.group}"
                                                     var="a" itemLabel="#{a.name}" itemValue="#{a}"
                                                     converter="groupConverter" 
                                                     forceSelection="true" immediate="true" required="true">
-                                        <p:ajax event="itemSelect" update="albumGroups"/>
+                                        <p:ajax event="itemSelect" update="albumGroup"/>
                                     </p:autoComplete>
-                                </p:column>
-                                <p:column>
+                                </h:column>
+                                <h:column>
                                     <p:commandButton id="newGroupButton" value="+" update="addisplay" action="#{addDialogModelManagedBean.newGroupEventHandler()}"/>
-                                </p:column>
-                            </p:row>
+                                </h:column>
                         </h:panelGrid>  
                     </p:panel>
 
                     <p:panel id="groupPanel" header="Group #{addDialogModelManagedBean.album.name}" rendered="#{addDialogModelManagedBean.createGroupP()}">  
                         <h:panelGrid columns="3" style="width:100%">  
-                            <p:row>
-                                <p:column>
+                                <h:column>
                                     <h:outputText value="Name"/>   
-                                </p:column>
-                                <p:column colspan="2">
+                                </h:column>
+                                <h:column >
                                     <p:inputText id="groupNameInput" value="#{addDialogModelManagedBean.group.name}" />
-                                </p:column>
-                            </p:row>
+                                </h:column>
+                                <h:column/>
 
-                            <p:row>
-                                <p:column>
+                                <h:column>
                                     <h:outputText value="Members" /> 
-                                </p:column>
-                                <p:column>
+                                </h:column>
+                                <h:column>
                                     <p:autoComplete id="membersAutoComplete" 
                                                     value="#{addDialogModelManagedBean.members}" 
                                                     completeMethod="#{addDialogModelManagedBean.completeMusicians}" 
@@ -245,33 +239,46 @@ and open the template in the editor.
                                         <p:ajax event="itemUnselect" update="membersAutoComplete"/>
                                         <p:ajax event="itemSelect" update="membersAutoComplete"/>
                                     </p:autoComplete>
-                                </p:column>
-                                <p:column>
+                                </h:column>
+                                <h:column>
                                     <p:commandButton id="newMemberButton" value="+" update="addisplay" action="#{addDialogModelManagedBean.newMemberEventHandler()}"/>
-                                </p:column>
-                            </p:row>
+                                </h:column>
                         </h:panelGrid>  
                     </p:panel>
 
                     <p:panel id="moodPanel" header="Mood #{addDialogModelManagedBean.mood.name}" rendered="#{addDialogModelManagedBean.createMoodP()}">  
                         <h:panelGrid columns="3" style="width:100%">  
-                            <p:row>
-                                <p:column>
+                                <h:column>
                                     <h:outputText value="Name"/>   
-                                </p:column>
-                                <p:column colspan="2">
+                                </h:column>
+                                <h:column colspan="2">
                                     <p:inputText id="MoodNameInput" value="#{addDialogModelManagedBean.mood.name}" />
-                                </p:column>
-                            </p:row>
+                                </h:column>
 
-                            <p:row>
-                                <p:column>
+                                <h:column>
                                     <h:outputText value="Value"/>   
-                                </p:column>
-                                <p:column colspan="2">
+                                </h:column>
+                                <h:column colspan="2">
                                     <p:inputText id="MoodValueInput" value="#{addDialogModelManagedBean.mood.value}" />
-                                </p:column>
-                            </p:row>
+                                </h:column>
+                        </h:panelGrid>  
+                    </p:panel>
+                    
+                    <p:panel id="memberPanel" header="Musician #{addDialogModelManagedBean.musician.name}" rendered="#{addDialogModelManagedBean.createMusicianP()}">  
+                        <h:panelGrid columns="3" style="width:100%">  
+                                <h:column>
+                                    <h:outputText value="Name"/>   
+                                </h:column>
+                                <h:column colspan="2">
+                                    <p:inputText id="MoodNameInput" value="#{addDialogModelManagedBean.musician.name}" />
+                                </h:column>
+
+                                <h:column>
+                                    <h:outputText value="Link"/>   
+                                </h:column>
+                                <h:column colspan="2">
+                                    <p:inputText id="MoodValueInput" value="#{addDialogModelManagedBean.musician.link}" />
+                                </h:column>
                         </h:panelGrid>  
                     </p:panel>
 
