@@ -16,7 +16,7 @@ import javax.ejb.FinderException;
  */
 public interface GenreBeanRemoteHome extends EJBHome {
 
-    com.mycompany.bmp.Genre create(Long id, String name)  throws RemoteException, CreateException;
+    com.mycompany.bmp.Genre create(String name)  throws RemoteException, CreateException;
 
     Long add()  throws  RemoteException;
     Long delete(java.lang.Long key)  throws  RemoteException;

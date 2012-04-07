@@ -317,15 +317,16 @@ public class AlbumBean implements EntityBean {
             if (result.next()) {
                 long newId = result.getLong(1);
                 Logger.getLogger(AlbumBean.class.getName()).log(Level.INFO, "VLEU AlbumBean ejbCreate newId: " + newId + "Executed query: " + query);
-                query = "INSERT INTO albums (id, name, group, genre) "
+                query = "INSERT INTO albums (id, name, \"group\", genre) "
                       + "VALUES (" + newId + ", '" + name + "' ," + groupId + ", " + genreId + ")";
                 statement.executeQuery(query);
                 connection.commit();
+                this.id = newId; //????? Bean life cycle misunderstanding!
                 return Long.valueOf(newId);
             }
             return null;
         } catch (SQLException e) {
-            throw new EJBException("Ошибка Create\n query = " + query + "\n" + e.getMessage());
+            throw new EJBException("VLEU AlbumBean ejbCreate Create\n query = " + query + "\n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
         }

@@ -9,6 +9,7 @@ package models.entitys;
  * @author Klaritin
  */
 public class GenreModel {
+
     private long id;
     private String name;
 
@@ -34,5 +35,18 @@ public class GenreModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "id: " + id + "name: " + name;
+    }    
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof GenreModel)) {
+            return false;
+        }
+        return this.id == ((GenreModel) obj).getId();
     }
 }

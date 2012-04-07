@@ -275,7 +275,6 @@ public class TrackBean implements EntityBean {
             }
 
         } catch (SQLException e) {
-            //e.printStackTrace();
             throw new EJBException("Ошибка SELECT\n query = " + query + "\n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
@@ -285,17 +284,20 @@ public class TrackBean implements EntityBean {
     public Long ejbHomeDelete(java.lang.Long key) {
         Connection connection = null;
         Statement statement = null;
-        String query = "DELETE FROM tracks "
-                + "WHERE id = " + key.longValue();
+        String query = "DELETE FROM rates "
+                     + "WHERE track = " + key.longValue();
         try {
             connection = dataSource.getConnection();
             statement = connection.createStatement();
+            statement.executeQuery(query);
+            query = "DELETE FROM tracks "
+                     + "WHERE id = " + key.longValue();
             statement.executeQuery(query);
             connection.commit();
             return key;
         } catch (SQLException e) {
             //e.printStackTrace();
-            throw new EJBException("Ошибка SELECT\n " + e.getMessage());
+            throw new EJBException("ejbHomeDelete SELECT\n " + e.getMessage());
         } finally {
             closeConnection(connection, statement);
         }

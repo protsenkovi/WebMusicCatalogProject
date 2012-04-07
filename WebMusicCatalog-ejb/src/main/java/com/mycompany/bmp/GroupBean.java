@@ -152,13 +152,13 @@ public class GroupBean implements EntityBean {
             query = "DELETE FROM group_members WHERE \"group\" = " + this.id.longValue();
             statement.executeQuery(query);
             Logger.getLogger(GroupBean.class.getName()).log(Level.INFO, "VLEU GroupBean ejbStore  group_members id: " + this.id + " deleted. Query: " + query);
-            
+
             Iterator iter = members.iterator();
             while (iter.hasNext()) {
-                Long memberId = (Long)iter.next();
+                Long memberId = (Long) iter.next();
                 query = "INSERT INTO group_members(\"group\", member) VALUES (" + this.id.longValue() + " , " + memberId.longValue() + ")";
                 statement.executeQuery(query);
-                Logger.getLogger(GroupBean.class.getName()).log(Level.INFO, "VLEU GroupBean ejbStore  Member id: " + memberId  + " inserted. Query: " + query);
+                Logger.getLogger(GroupBean.class.getName()).log(Level.INFO, "VLEU GroupBean ejbStore  Member id: " + memberId + " inserted. Query: " + query);
             }
             Logger.getLogger(GroupBean.class.getName()).log(Level.INFO, "VLEU GroupBean ejbStore  Group id: " + this.id + " name: " + this.name + " stored.");
         } catch (SQLException e) {
@@ -166,7 +166,7 @@ public class GroupBean implements EntityBean {
             throw new EJBException("ejbStore SELECT\n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
-        }        
+        }
     }
 
     // </editor-fold>
@@ -319,23 +319,35 @@ public class GroupBean implements EntityBean {
         }
     }
 
-    public void ejbCreate(Long id, String name) {
+    public Long ejbCreate(Long id, String name, Collection members) {
         Connection connection = null;
         Statement statement = null;
-        String query = "INSERT INTO groups (id, name) "
-                + "VALUES (" + id.longValue() + ", '" + name + "')";
+        String query = null;
         try {
             connection = dataSource.getConnection();
             statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
+            query = "SELECT group_id.NEXTVAL FROM dual";
+            ResultSet result = statement.executeQuery(query);
+            if (result.next()) {
+                long newId = result.getLong(1);
+                Logger.getLogger(TrackBean.class.getName()).log(Level.INFO, "VLEU GroupBean ejbCreate newId: " + newId + "Executed query: " + query);
+                query = "INSERT INTO groups (id, name) "
+                        + "VALUES (" + newId + ", '" + name + "')";
+                statement.executeQuery(query);
+                connection.commit();
+                this.id = Long.valueOf(newId); //????? Bean life cycle misunderstanding!
+                return Long.valueOf(newId);
+            }
+            return null;
         } catch (SQLException e) {
-            throw new EJBException("Ошибка Create\n query = " + query + "\n" + e.getMessage());
+            throw new EJBException("GroupBean Create\n query = " + query + "\n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
         }
     }
 
-    public void ejbPostCreate(Long id, String name) {
+    public void ejbPostCreate(Long id, String name, Collection members) {
+        this.name = name;
+        this.members = members;
     }
 }

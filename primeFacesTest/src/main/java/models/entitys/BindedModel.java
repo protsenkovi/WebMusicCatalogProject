@@ -147,4 +147,11 @@ public class BindedModel implements Serializable, Comparable {
         }
         return 0;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BindedModel))
+            return false;        
+        return this.trackId == ((BindedModel)obj).getTrackId();
+    }
 }

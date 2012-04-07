@@ -45,5 +45,9 @@
         <converter-class>converters.MoodConverter</converter-class>
     </converter>
 
+    <converter>
+        <converter-id>genreConverter</converter-id>
+        <converter-class>converters.GenreConverter</converter-class>
+    </converter>
     
 </faces-config>

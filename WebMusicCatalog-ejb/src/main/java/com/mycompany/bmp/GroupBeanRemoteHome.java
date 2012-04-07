@@ -6,6 +6,7 @@
 package com.mycompany.bmp;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import javax.ejb.CreateException;
 import javax.ejb.EJBHome;
 import javax.ejb.FinderException;
@@ -16,7 +17,7 @@ import javax.ejb.FinderException;
  */
 public interface GroupBeanRemoteHome extends EJBHome {
 
-    com.mycompany.bmp.Group create(Long id, String name)  throws RemoteException, CreateException;
+    com.mycompany.bmp.Group create(Long id, String name, Collection members)  throws RemoteException, CreateException;
 
     Long add()  throws  RemoteException;
     Long delete(java.lang.Long key)  throws  RemoteException;

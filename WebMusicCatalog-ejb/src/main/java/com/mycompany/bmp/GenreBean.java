@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJBException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
@@ -27,7 +29,6 @@ public class GenreBean implements EntityBean {
 
     private Long id;
     private String name;
-
     private EntityContext entityContext;
     private DataSource dataSource;
 
@@ -42,7 +43,6 @@ public class GenreBean implements EntityBean {
     public void setName(String name) {
         this.name = name;
     }
-
 
     // <editor-fold defaultstate="collapsed" desc="EJB infrastructure methods. Click the + sign on the left to edit the code.">
     // TODO Add code to acquire and use other enterprise resources (DataSource, JMS, enterprise beans, Web services)
@@ -109,7 +109,7 @@ public class GenreBean implements EntityBean {
             this.id = new Long(resultSet.getLong(1));
             this.name = resultSet.getString(2);
         } catch (SQLException e) {
-            throw new EJBException("Ошибка SELECT\n" + e.getMessage());
+            throw new EJBException("ejbLoad SELECT\n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
         }
@@ -284,24 +284,34 @@ public class GenreBean implements EntityBean {
         }
     }
 
-    public void ejbCreate(Long id, String name) {
+    public Long ejbCreate(String name) {
         Connection connection = null;
         Statement statement = null;
-        String query = "INSERT INTO genres (id, name) "
-                + "VALUES (" + id.longValue() + ", '" + name + "')";
+        String query = null;
         try {
             connection = dataSource.getConnection();
             statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
+            query = "SELECT genre_id.NEXTVAL FROM dual";
+            ResultSet result = statement.executeQuery(query);
+            if (result.next()) {
+                long newId = result.getLong(1);
+                Logger.getLogger(TrackBean.class.getName()).log(Level.INFO, "VLEU GenreBean ejbCreate newId: " + newId + "Executed query: " + query);
+                query = "INSERT INTO genres (id, name) "
+                        + "VALUES (" + newId + ", '" + name + "')";
+                statement.executeQuery(query);
+                connection.commit();
+                this.id = Long.valueOf(newId); //????? Bean life cycle misunderstanding!
+                return Long.valueOf(newId);
+            }
+            return null;
         } catch (SQLException e) {
-            throw new EJBException("Ошибка Create\n query = " + query + "\n" + e.getMessage());
+            throw new EJBException("GenreBean Create\n query = " + query + "\n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
         }
     }
-    
-    public void ejbPostCreate(Long id, String name) {
-        
+
+    public void ejbPostCreate(String name) {
+        this.name = name;
     }
 }

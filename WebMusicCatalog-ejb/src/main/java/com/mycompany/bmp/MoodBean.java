@@ -290,16 +290,18 @@ public class MoodBean implements EntityBean {
         }
     }
 
-    public void ejbCreate(Integer id, String name) {
+    public Integer ejbCreate(Integer id, String name) {
         Connection connection = null;
         Statement statement = null;
         String query = "INSERT INTO moods (value, name) "
-                     + "VALUES (" + id.intValue() + ", '" + name + ")";
+                     + "VALUES (" + id.intValue() + ", '" + name + "')";
         try {
             connection = dataSource.getConnection();
             statement = connection.createStatement();
             statement.executeQuery(query);
             connection.commit();
+            this.value = id.intValue();
+            return id;
         } catch (SQLException e) {
             throw new EJBException("Ошибка Create\n query = " + query + "\n" + e.getMessage());
         } finally {
@@ -307,6 +309,6 @@ public class MoodBean implements EntityBean {
         }
     }
     public void ejbPostCreate(Integer id, String name) {
-    
+        this.name = name;
     }
 }
