@@ -250,37 +250,6 @@ public class TrackBean implements EntityBean {
         }
     }
 
-    //home methods
-    public Long ejbHomeAdd() {
-        Connection connection = null;
-        Statement statement = null;
-        String name = "default";
-        String query = "INSERT INTO tracks (id, name, album, mood, rate) "
-                + "VALUES (track_id.NEXTVAL, '" + name + "', null, null, null)";
-        try {
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-
-            connection.commit();
-
-            query = "SELECT id FROM tracks WHERE name='" + name + "' ";
-            statement = connection.createStatement();
-
-            ResultSet res = statement.executeQuery(query);
-            if (res.next()) {
-                return new Long(res.getLong(1));
-            } else {
-                return null;
-            }
-
-        } catch (SQLException e) {
-            throw new EJBException("Ошибка SELECT\n query = " + query + "\n" + e.getMessage());
-        } finally {
-            closeConnection(connection, statement);
-        }
-    }
-
     public Long ejbHomeDelete(java.lang.Long key) {
         Connection connection = null;
         Statement statement = null;
@@ -298,25 +267,6 @@ public class TrackBean implements EntityBean {
         } catch (SQLException e) {
             //e.printStackTrace();
             throw new EJBException("ejbHomeDelete SELECT\n " + e.getMessage());
-        } finally {
-            closeConnection(connection, statement);
-        }
-    }
-
-    public Long ejbHomeCopy(java.lang.Long key) {
-        Connection connection = null;
-        Statement statement = null;
-        String query = "INSERT INTO tracks (id, name, album, mood, rate) "
-                + "VALUES (track_id.NEXTVAL, (SELECT name FROM tracks WHERE id =" + key.longValue() + ") ,(SELECT album FROM tracks WHERE id=" + key.longValue() + "), (SELECT mood FROM tracks WHERE id=" + key.longValue() + "), (SELECT album FROM tracks WHERE id=" + key.longValue() + "))";
-        try {
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
-            return null;
-        } catch (SQLException e) {
-            //e.printStackTrace();
-            throw new EJBException("Ошибка INSERT \n query = " + query + "\n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
         }

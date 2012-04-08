@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJBException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
@@ -26,7 +28,6 @@ public class MemberBean implements EntityBean {
     private long id;
     private String name;
     private String link;
-
     private EntityContext entityContext;
     private DataSource dataSource;
 
@@ -209,8 +210,8 @@ public class MemberBean implements EntityBean {
             closeConnection(connection, statement);
         }
     }
-    
-        public java.util.Collection ejbFindByGroup(java.lang.Long key) throws FinderException {
+
+    public java.util.Collection ejbFindByGroup(java.lang.Long key) throws FinderException {
         Connection connection = null;
         Statement statement = null;
         try {
@@ -246,38 +247,6 @@ public class MemberBean implements EntityBean {
         }
     }
 
-    //home methods
-    public Long ejbHomeAdd() {
-        Connection connection = null;
-        Statement statement = null;
-        String name = "default";
-        String query = "INSERT INTO musicians (id, name, link) "
-                + "VALUES (musician_id.NEXTVAL, '" + name + "', null)";
-        try {
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-
-            connection.commit();
-
-            query = "SELECT id FROM musicians WHERE name='" + name + "' ";
-            statement = connection.createStatement();
-
-            ResultSet res = statement.executeQuery(query);
-            if (res.next()) {
-                return new Long(res.getLong(1));
-            } else {
-                return null;
-            }
-
-        } catch (SQLException e) {
-            //e.printStackTrace();
-            throw new EJBException("Ошибка SELECT\n query = " + query + "\n" + e.getMessage());
-        } finally {
-            closeConnection(connection, statement);
-        }
-    }
-
     public Long ejbHomeDelete(java.lang.Long key) {
         Connection connection = null;
         Statement statement = null;
@@ -297,43 +266,35 @@ public class MemberBean implements EntityBean {
         }
     }
 
-    public Long ejbHomeCopy(java.lang.Long key) {
+    public Long ejbCreate(String name, String link) {
         Connection connection = null;
         Statement statement = null;
-        String query = "INSERT INTO musicians (id, name, link) "
-                + "VALUES (musician_id.NEXTVAL, (SELECT name FROM musicians WHERE id =" + key.longValue() + ") ,(SELECT link FROM musicians WHERE id=" + key.longValue() + "))";
+        String query = null;
         try {
             connection = dataSource.getConnection();
             statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
+            query = "SELECT musician_id.NEXTVAL FROM dual";
+            ResultSet result = statement.executeQuery(query);
+            if (result.next()) {
+                long newId = result.getLong(1);
+                Logger.getLogger(TrackBean.class.getName()).log(Level.INFO, "VLEU MemberBean ejbCreate newId: " + newId + "Executed query: " + query);
+                query = "INSERT INTO musicians (id, name, link) "
+                        + "VALUES (" + newId + ", '" + name + "', '" + link + "')";
+                statement.executeQuery(query);
+                connection.commit();
+                this.id = newId; //????? Bean life cycle misunderstanding!
+                return Long.valueOf(newId);
+            }
             return null;
         } catch (SQLException e) {
-            //e.printStackTrace();
-            throw new EJBException("Ошибка INSERT \n query = " + query + "\n" + e.getMessage());
+            throw new EJBException("MusicianBean Create\n query = " + query + "\n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
         }
     }
 
-    public void ejbCreate(Long id, String name, String link) {
-        Connection connection = null;
-        Statement statement = null;
-        String query = "INSERT INTO musicians (id, name,link) "
-                + "VALUES (" + id.longValue() + ", '" + name + "' ," + link +  ")";
-        try {
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
-        } catch (SQLException e) {
-            throw new EJBException("Ошибка Create\n query = " + query + "\n" + e.getMessage());
-        } finally {
-            closeConnection(connection, statement);
-        }
-    }
-    
-    public void ejbPostCreate(Long id, String name, String link) {
-
+    public void ejbPostCreate(String name, String link) {
+        this.name = name;
+        this.link = link;
     }
 }

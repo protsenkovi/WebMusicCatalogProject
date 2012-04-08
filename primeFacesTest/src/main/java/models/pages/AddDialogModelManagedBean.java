@@ -9,19 +9,15 @@ import models.entitys.MusicianModel;
 import models.entitys.MoodModel;
 import models.entitys.GroupModel;
 import models.entitys.TrackModel;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import logic.ControllerManagedBean;
 import models.entitys.*;
-import sun.rmi.runtime.Log;
 
 /**
  *
@@ -58,7 +54,9 @@ public class AddDialogModelManagedBean implements Serializable {
         return musician;
     }
 
-    public void setMusician(MusicianModel musician) {
+    public void setMusician(MusicianModel musician) { //
+        members.remove(this.musician);
+        members.add(musician);
         this.musician = musician;
     }
 
@@ -174,6 +172,7 @@ public class AddDialogModelManagedBean implements Serializable {
         album = new AlbumModel(-1, "", -1, -1);
         mood = new MoodModel(-1, "");
         group = new GroupModel(-1, "");
+        musician = new MusicianModel(-1, "", "");
         showed = false;
     }
 
@@ -331,6 +330,31 @@ public class AddDialogModelManagedBean implements Serializable {
         long newTrackId = -1;
         int newMoodValue = -1;
         long newGenreId = -1;
+        long newMemberId = -1;
+        if (memberCreate) {
+            if (!memberCreated) {
+                newMemberId = controllerManagedBean.createMusician(musician);
+                if (newMemberId != -1) {
+                    this.musician.setId(newMemberId);
+                    members.add(musician);
+                    memberCreated = true;
+                }
+                Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate newMemberId ={0}", newMemberId);
+            } else {
+                MusicianModel oldvalue;
+                for (int i = 0; i < members.size(); i++) {
+                    oldvalue = members.get(i);
+                    if (oldvalue.getId() == musician.getId()) {
+                        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate found old value.");
+                        members.remove(i);
+                        members.add(musician);
+                        break;
+                    }
+                }
+                Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate member ={0}", musician + " members: " + members);
+                controllerManagedBean.updateMusician(musician);
+            }
+        }
         if (groupCreate) {
             if (!groupCreated) {
                 newGroupId = controllerManagedBean.createGroup(group, members);
@@ -338,9 +362,9 @@ public class AddDialogModelManagedBean implements Serializable {
                     this.group.setId(newGroupId);
                     groupCreated = true;
                 }
-                Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate newGroupId ={0}", newAlbumId);
+                Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate newGroupId ={0}", newGroupId);
             } else {
-                controllerManagedBean.updateAlbum(album, genre, group);
+                controllerManagedBean.updateGroup(group, members);
             }
         }
         if (genreCreate) {
@@ -350,9 +374,9 @@ public class AddDialogModelManagedBean implements Serializable {
                     this.genre.setId(newGenreId);
                     genreCreated = true;
                 }
-                Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate newGenreId ={0}", newAlbumId);
+                Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate newGenreId ={0}", newGenreId);
             } else {
-                //TODO update genre
+                controllerManagedBean.updateGenre(genre);
             }
         }
         if (albumCreate) {
@@ -374,7 +398,7 @@ public class AddDialogModelManagedBean implements Serializable {
                     moodCreated = true;
                 }
             } else {
-                //TODO updateMood
+                controllerManagedBean.updateMood(mood);
             }
         }
         if (trackCreate) {
@@ -388,11 +412,6 @@ public class AddDialogModelManagedBean implements Serializable {
                 controllerManagedBean.updateTrack(track, album, mood);
             }
         }
-
-//        if (groupCreate) {
-//            if (!groupCreated) 
-//                
-//        }
     }
 
     public String getCreateUpdateButtonName() {
@@ -444,6 +463,7 @@ public class AddDialogModelManagedBean implements Serializable {
             mood = new MoodModel(-1, "");
             group = new GroupModel(-1, "");
             genre = new GenreModel(-1, "");
+            musician = new MusicianModel(-1, "", "");
             showed = true;
         }
     }

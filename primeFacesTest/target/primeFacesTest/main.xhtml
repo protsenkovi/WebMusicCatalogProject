@@ -76,6 +76,10 @@ and open the template in the editor.
                         <p:inputText id="search" size="60" value="#{controllerManagedBean.searchString}" />
                         <p:commandButton value="Search" update="basictable" action="#{controllerManagedBean.search()}"/>
                     </h:panelGrid>
+                    <h:panelGrid columns="2" cellpadding="5" styleClass="centered">
+                        <p:commandLink value="Top 20 Groups" update="topGroupsdialog" oncomplete="topGroupsDialog.show()"/>
+                        <p:commandLink value="Top 20 Albums" update="topAlbumssdialog" oncomplete="topAlbumssdialog.show()"/>
+                    </h:panelGrid>
 
                 </p:layoutUnit>
 
@@ -287,23 +291,23 @@ and open the template in the editor.
                     </p:panel>
 
                     <p:panel id="memberPanel" header="Musician #{addDialogModelManagedBean.musician.name}" rendered="#{addDialogModelManagedBean.createMusicianP()}">  
-                        <h:panelGrid columns="3" style="width:100%">  
+                        <h:panelGrid columns="2" style="width:100%">  
                             <h:column>
                                 <h:outputText value="Name"/>   
                             </h:column>
-                            <h:column colspan="2">
+                            <h:column >
                                 <p:inputText id="memberNameInput" value="#{addDialogModelManagedBean.musician.name}" />
                             </h:column>
 
                             <h:column>
                                 <h:outputText value="Link"/>   
                             </h:column>
-                            <h:column colspan="2">
+                            <h:column>
                                 <p:inputText id="memberLinkInput" value="#{addDialogModelManagedBean.musician.link}" />
                             </h:column>
                         </h:panelGrid>  
                     </p:panel>
-                    
+
                     <p:panel id="genrePanel" header="Genre #{addDialogModelManagedBean.genre.name}" rendered="#{addDialogModelManagedBean.createGenreP()}">  
                         <h:panelGrid columns="2" style="width:100%">  
                             <h:column>
@@ -324,6 +328,20 @@ and open the template in the editor.
                 </h:panelGrid>  
             </p:dialog>
 
+            <p:dialog id="topGroupsdialog" header="Top 20 Groups" widgetVar="topGroupsDialog" showEffect="fade" hideEffect="fade" width="600">
+                <p:dataList value="#{controllerManagedBean.searchTopGroups()}" var="group" type="ordered" >
+                    #{group.key}, 
+                    <h:outputText value="#{group.value}">
+                        <f:convertNumber pattern = "##,##"/>
+                    </h:outputText>
+                </p:dataList>
+            </p:dialog>
+
+            <p:dialog id="topAlbumssdialog" header="Top 20 Albums" widgetVar="topAlbumssdialog" showEffect="fade" hideEffect="fade" width="600">
+                <p:dataList value="#{controllerManagedBean.searchTopAlbums()}" var="album" type="ordered">
+                    #{album.key}, #{album.value}
+                </p:dataList>
+            </p:dialog>
         </h:form>            
     </h:body>
 </html>

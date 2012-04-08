@@ -218,35 +218,6 @@ public class GenreBean implements EntityBean {
         }
     }
 
-    //home methods
-    public Long ejbHomeAdd() {
-        Connection connection = null;
-        Statement statement = null;
-        String name = "default";
-        String query = "INSERT INTO genres (id, name) "
-                + "VALUES (genre_id.NEXTVAL, '" + name + "')";
-        try {
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
-            query = "SELECT id FROM genres WHERE name='" + name + "' ";
-            statement = connection.createStatement();
-
-            ResultSet res = statement.executeQuery(query);
-            if (res.next()) {
-                return new Long(res.getLong(1));
-            } else {
-                return null;
-            }
-
-        } catch (SQLException e) {
-            throw new EJBException("Ошибка SELECT\n " + e.getMessage());
-        } finally {
-            closeConnection(connection, statement);
-        }
-    }
-
     public Long ejbHomeDelete(java.lang.Long key) {
         Connection connection = null;
         Statement statement = null;
@@ -265,25 +236,7 @@ public class GenreBean implements EntityBean {
             closeConnection(connection, statement);
         }
     }
-
-    public Long ejbHomeCopy(java.lang.Long key) {
-        Connection connection = null;
-        Statement statement = null;
-        String query = "INSERT INTO genres (id, name) "
-                + "VALUES (genre_id.NEXTVAL, (SELECT name FROM genres WHERE id=" + key + "))";
-        try {
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
-            return null;
-        } catch (SQLException e) {
-            throw new EJBException("Ошибка SELECT\n " + e.getMessage());
-        } finally {
-            closeConnection(connection, statement);
-        }
-    }
-
+    
     public Long ejbCreate(String name) {
         Connection connection = null;
         Statement statement = null;

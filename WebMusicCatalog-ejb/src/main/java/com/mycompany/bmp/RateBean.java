@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJBException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
@@ -26,7 +28,6 @@ public class RateBean implements EntityBean {
     private long id;
     private long track;
     private int value;
-
     private EntityContext entityContext;
     private DataSource dataSource;
 
@@ -38,7 +39,7 @@ public class RateBean implements EntityBean {
         return new Long(track);
     }
 
-    public void setTrack (Long trackId) {
+    public void setTrack(Long trackId) {
         this.track = trackId.longValue();
     }
 
@@ -133,7 +134,7 @@ public class RateBean implements EntityBean {
         try {
             connection = dataSource.getConnection();
             statement = connection.createStatement();
-            String query = "UPDATE rates SET track = '" + this.track + "', value = " + this.value +  " WHERE id = " + this.id;
+            String query = "UPDATE rates SET track = '" + this.track + "', value = " + this.value + " WHERE id = " + this.id;
             ResultSet resultSet = statement.executeQuery(query);
         } catch (SQLException e) {
             throw new EJBException("Ошибка SELECT\n" + e.getMessage());
@@ -225,38 +226,6 @@ public class RateBean implements EntityBean {
         }
     }
 
-    //home methods
-    public Long ejbHomeAdd() {
-        Connection connection = null;
-        Statement statement = null;
-        String name = "default";
-        String query = "INSERT INTO rates (id, track, value) "
-                + "VALUES (rate_id.NEXTVAL, 0, null)";
-        try {
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-
-            connection.commit();
-
-            query = "SELECT id FROM rates WHERE track='" + name + "' ";
-            statement = connection.createStatement();
-
-            ResultSet res = statement.executeQuery(query);
-            if (res.next()) {
-                return new Long(res.getLong(1));
-            } else {
-                return null;
-            }
-
-        } catch (SQLException e) {
-            //e.printStackTrace();
-            throw new EJBException("Ошибка SELECT\n query = " + query + "\n" + e.getMessage());
-        } finally {
-            closeConnection(connection, statement);
-        }
-    }
-
     public Long ejbHomeDelete(java.lang.Long key) {
         Connection connection = null;
         Statement statement = null;
@@ -276,43 +245,35 @@ public class RateBean implements EntityBean {
         }
     }
 
-    public Long ejbHomeCopy(java.lang.Long key) {
+    public Long ejbCreate(Long trackId, Integer value) {
         Connection connection = null;
         Statement statement = null;
-        String query = "INSERT INTO rates (id, track, value) "
-                + "VALUES (rate_id.NEXTVAL, (SELECT track FROM rates WHERE id =" + key.longValue() + ") ,(SELECT value FROM rates WHERE id=" + key.longValue() + "))";
+        String query = null;
         try {
             connection = dataSource.getConnection();
             statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
+            query = "SELECT rate_id.NEXTVAL FROM dual";
+            ResultSet result = statement.executeQuery(query);
+            if (result.next()) {
+                long newId = result.getLong(1);
+                Logger.getLogger(RateBean.class.getName()).log(Level.INFO, "VLEU RateBean ejbCreate newId: " + newId + "Executed query: " + query);
+                query = "INSERT INTO rates (id, track, value) "
+                        + "VALUES (" + newId + ", " + track + " , " + value + ")";
+                statement.executeQuery(query);
+                connection.commit();
+                this.id = newId; //????? Bean life cycle misunderstanding!
+                return Long.valueOf(newId);
+            }
             return null;
         } catch (SQLException e) {
-            //e.printStackTrace();
-            throw new EJBException("Ошибка INSERT \n query = " + query + "\n" + e.getMessage());
+            throw new EJBException("RateBean Create\n query = " + query + "\n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
         }
     }
 
-    public void ejbCreate(Long id, String name, String link) {
-        Connection connection = null;
-        Statement statement = null;
-        String query = "INSERT INTO rates (id, track, value) "
-                + "VALUES (" + id.longValue() + ", '" + name + "' ," + link +  ")";
-        try {
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
-        } catch (SQLException e) {
-            throw new EJBException("Ошибка Create\n query = " + query + "\n" + e.getMessage());
-        } finally {
-            closeConnection(connection, statement);
-        }
-    }
-    
-    public void ejbPostCreate(Long id, String name, String link) {
-
+    public void ejbPostCreate(Long trackId, Integer value) {
+        this.track = trackId.longValue();
+        this.value = value.intValue();
     }
 }

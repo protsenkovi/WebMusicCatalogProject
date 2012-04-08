@@ -18,9 +18,7 @@ public interface MoodBeanRemoteHome extends EJBHome {
 
     com.mycompany.bmp.Mood create(Integer id, String name)  throws RemoteException,CreateException;
 
-    Integer add()  throws  RemoteException;
     Integer delete(java.lang.Integer key)  throws  RemoteException;
-    Integer copy(java.lang.Integer key)  throws RemoteException;
 
     java.util.Collection findAll()  throws FinderException, RemoteException;
     java.util.Collection findByName(String name)  throws FinderException, RemoteException;

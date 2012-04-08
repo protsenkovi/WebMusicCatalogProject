@@ -219,38 +219,6 @@ public class MoodBean implements EntityBean {
         }
     }
 
-    //home methods
-    public Integer ejbHomeAdd() {
-        Connection connection = null;
-        Statement statement = null;
-        String name = "default";
-        String query = "INSERT INTO moods (value, name) "
-                + "VALUES (0, '" + name + "')";
-        try {
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-
-            connection.commit();
-
-            query = "SELECT value FROM moods WHERE name='" + name + "' ";
-            statement = connection.createStatement();
-
-            ResultSet res = statement.executeQuery(query);
-            if (res.next()) {
-                return new Integer(res.getInt(1));
-            } else {
-                return null;
-            }
-
-        } catch (SQLException e) {
-            //e.printStackTrace();
-            throw new EJBException("Ошибка SELECT\n query = " + query + "\n" + e.getMessage());
-        } finally {
-            closeConnection(connection, statement);
-        }
-    }
-
     public Integer ejbHomeDelete(java.lang.Integer key) {
         Connection connection = null;
         Statement statement = null;
@@ -265,26 +233,6 @@ public class MoodBean implements EntityBean {
         } catch (SQLException e) {
             //e.printStackTrace();
             throw new EJBException("Ошибка SELECT\n " + e.getMessage());
-        } finally {
-            closeConnection(connection, statement);
-        }
-    }
-
-    public Integer ejbHomeCopy(java.lang.Integer key) {
-        Connection connection = null;
-        Statement statement = null;
-		int shift = 1000000;
-        String query = "INSERT INTO moods (value, name) "
-                + "VALUES ("+ (key.intValue() + shift) +" (SELECT name FROM moods WHERE value =" + key.intValue() + "))";
-        try {
-            connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
-            return null;
-        } catch (SQLException e) {
-            //e.printStackTrace();
-            throw new EJBException("Ошибка INSERT \n query = " + query + "\n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
         }

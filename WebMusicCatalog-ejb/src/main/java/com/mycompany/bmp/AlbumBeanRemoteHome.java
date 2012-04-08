@@ -18,9 +18,7 @@ public interface AlbumBeanRemoteHome extends EJBHome {
 
     com.mycompany.bmp.Album create(String name, long groupId, long genreId)  throws RemoteException,CreateException;
 
-    Long add()  throws  RemoteException;
     Long delete(java.lang.Long key)  throws  RemoteException;
-    Long copy(java.lang.Long key)  throws  RemoteException;
 
     java.util.Collection findAll()  throws FinderException, RemoteException;
     com.mycompany.bmp.Album findByPrimaryKey(java.lang.Long key)  throws FinderException, RemoteException;
