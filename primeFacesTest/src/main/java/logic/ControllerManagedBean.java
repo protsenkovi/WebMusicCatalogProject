@@ -157,10 +157,17 @@ public class ControllerManagedBean implements Serializable {
         return Utils.searchMusicianAlbums(name);
     }
     
-    public List<Map.Entry<String, Double>> searcRatedAlbums() {
+    public List<Map.Entry<String, Double>> searchRatedAlbums() {
         return Utils.searchAlbumRating();
     }
     
+    public List<MusicianModel> searchMusiciansByGenre(Long genreId) {
+        return Utils.searchMusiciansByGenre(genreId);
+    }
+    
+    public List<MusicianModel> searchMusiciansByMood(Integer value) {
+        return Utils.searchMusiciansByMood(value);
+    }
 
     public List<MusicianModel> completeMusician(String query, List<MusicianModel> alreadyChoosen) {
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeMusician: Started!");

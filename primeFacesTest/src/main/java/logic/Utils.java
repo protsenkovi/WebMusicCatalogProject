@@ -17,6 +17,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import models.entitys.AlbumModel;
 import models.entitys.GroupModel;
+import models.entitys.MusicianModel;
 
 /**
  *
@@ -178,6 +179,88 @@ public class Utils {
         }
         Logger.getLogger(Utils.class.getName()).log(Level.INFO, "albums " + albums);
         return albums;
+    }
+    
+    public static List<MusicianModel> searchMusiciansByGenre(Long id) {
+        List<MusicianModel> musicians = new ArrayList<MusicianModel>();
+        DataSource dataSource;
+        Context context;
+        Connection connection = null;
+        PreparedStatement statement = null;
+        String query;
+        try {
+            context = new InitialContext();
+            dataSource = (DataSource) context.lookup(connectionString);
+            connection = dataSource.getConnection();
+            query = "SELECT musician.id, musician.name, musician.link "
+                    + "FROM (SELECT musician.id "
+                    + "      FROM musicians musician, group_members groupref, groups \"group\", albums album, genres genre "
+                    + "      WHERE groupref.member = musician.id AND "
+                    + "      groupref.\"group\" = \"group\".id AND "
+                    + "      album.\"group\" = \"group\".id AND "
+                    + "      album.genre = genre.id AND "
+                    + "      genre.id = " + id + " GROUP BY musician.id) genre_musician, musicians musician "
+                    + "WHERE musician.id = genre_musician.id";
+            statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                long musid = resultSet.getLong(1);
+                String name = resultSet.getString(2);
+                String link = resultSet.getString(3);
+                musicians.add(new MusicianModel(musid, name, link));
+            }
+        } catch (NamingException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeConnection(connection, statement);
+        }
+        Logger.getLogger(Utils.class.getName()).log(Level.INFO, "musicians " + musicians);
+        return musicians;
+    }
+    
+    public static List<MusicianModel> searchMusiciansByMood(Integer value) {
+        List<MusicianModel> musicians = new ArrayList<MusicianModel>();
+        DataSource dataSource;
+        Context context;
+        Connection connection = null;
+        PreparedStatement statement = null;
+        String query;
+        try {
+            context = new InitialContext();
+            dataSource = (DataSource) context.lookup(connectionString);
+            connection = dataSource.getConnection();
+            query = "SELECT musician.id, musician.name, musician.link "
+                    + "FROM (SELECT musician.id "
+                    + "      FROM musicians musician, group_members groupref, groups \"group\", albums album, tracks track, "
+                    + "       (SELECT MAX(value) as minvalue, m.maxvalue as maxvalue "
+                    + "        FROM moods, (SELECT value as maxvalue FROM moods WHERE value = " + value + ") m "
+                    + "        WHERE moods.value < m.maxvalue "
+                    + "        GROUP BY m.maxvalue) mood "
+                    + "WHERE groupref.member = musician.id AND groupref.\"group\" = \"group\".id AND "
+                    + "album.\"group\" = \"group\".id AND "
+                    + "track.album = album.id AND "
+                    + "track.mood > mood.minvalue AND track.mood <= mood.maxvalue "
+                    + "GROUP BY musician.id) res_musicians, musicians musician "
+                    + "WHERE res_musicians.id = musician.id";
+            statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                long musid = resultSet.getLong(1);
+                String name = resultSet.getString(2);
+                String link = resultSet.getString(3);
+                musicians.add(new MusicianModel(musid, name, link));
+            }
+        } catch (NamingException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeConnection(connection, statement);
+        }
+        Logger.getLogger(Utils.class.getName()).log(Level.INFO, "musicians " + musicians);
+        return musicians;
     }
 
     private static void closeConnection(Connection connection, Statement statement) {

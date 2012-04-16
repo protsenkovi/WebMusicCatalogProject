@@ -76,11 +76,13 @@ and open the template in the editor.
                         <p:inputText id="search" size="60" value="#{controllerManagedBean.searchString}" />
                         <p:commandButton value="Search" update="basictable" action="#{controllerManagedBean.search()}"/>
                     </h:panelGrid>
-                    <h:panelGrid columns="4" cellpadding="5" styleClass="centered">
+                    <h:panelGrid columns="6" cellpadding="6" styleClass="centered">
                         <p:commandLink value="Top Group" update="topGroupsdialog" oncomplete="topGroupsDialog.show()"/>
                         <p:commandLink value="Selected Album Content" update="albumContentdialog" oncomplete="albumContentdialog.show()"/>
                         <p:commandLink value="Selected Musician Albums" update="musicianAlbumsDialog" oncomplete="musicianAlbumsDialog.show()"/>
                         <p:commandLink value="Rated Albums" update="ratedAlbumsDialog" oncomplete="ratedAlbumsDialog.show()"/>
+                        <p:commandLink value="Musicians by genre" update="musiciansByGenreDialog" oncomplete="musiciansByGenreDialog.show()"/>
+                        <p:commandLink value="Musicians by mood" update="musiciansByMoodDialog" oncomplete="musiciansByMoodDialog.show()"/>
                     </h:panelGrid>
 
                 </p:layoutUnit>
@@ -361,8 +363,8 @@ and open the template in the editor.
                                 itemValue="#{member}" 
                                 converter="musicianConverter"
                                 forceSelection="true" immediate="true" dropdown="true">
-                                    <p:ajax event="itemSelect" update="musicianAlbumstable" listener="#{mainPageViewManagedBean.musicianSelect}"/>
-                                </p:autoComplete>
+                    <p:ajax event="itemSelect" update="musicianAlbumstable" listener="#{mainPageViewManagedBean.musicianSelect}"/>
+                </p:autoComplete>
                 <p:dataTable  id="musicianAlbumstable" var="row" value="#{mainPageViewManagedBean.searchMusicianAlbums()}"  styleClass="table, centered">  
                     <p:column id="modelHeader">  
                         <f:facet name="header">Album</f:facet>  
@@ -370,14 +372,82 @@ and open the template in the editor.
                     </p:column>
                 </p:dataTable> 
             </p:dialog>
-            
+
             <p:dialog id="ratedAlbumsDialog" header="Rated albums" widgetVar="ratedAlbumsDialog" showEffect="fade" hideEffect="fade" width="600">
-                <p:dataList value="#{controllerManagedBean.searcRatedAlbums()}" var="album" type="ordered" >
-                    #{album.key}, rate 
-                    <h:outputText value="#{album.value}">
-                        <f:convertNumber pattern = "##,##"/>
-                    </h:outputText>
-                </p:dataList>
+                <p:dataTable id="ratedAlbumsTable" value="#{controllerManagedBean.searchRatedAlbums()}" var="album" styleClass="table, centered">
+                    <p:column>  
+                        <f:facet name="header">Album</f:facet>  
+                        <h:outputText value="#{album.key}" />  
+                    </p:column>
+                    <p:column>  
+                        <f:facet name="header">Rate</f:facet>  
+                        <h:outputText value="#{album.value}">
+                            <f:convertNumber pattern = "##,##"/>
+                        </h:outputText> 
+                    </p:column>
+                </p:dataTable>
+                <p:panel header="Export Data">
+                    <h:commandLink value="Export as PDF">
+                        <p:graphicImage value="/images/pdf.png"/>
+                        <p:dataExporter type="pdf" target="ratedAlbumsTable" fileName="rated albums"/>
+                    </h:commandLink>
+                </p:panel>
+            </p:dialog>
+
+            <p:dialog id="musiciansByGenreDialog" header="Musicians By Genre" widgetVar="musiciansByGenreDialog" showEffect="fade" hideEffect="fade" width="600">
+                <p:autoComplete id="musiciansByGenreAutoComplete" 
+                                value="#{mainPageViewManagedBean.selectedGenre}" 
+                                completeMethod="#{mainPageViewManagedBean.completeGenres}" 
+                                var="genre" itemLabel="#{genre.name}" 
+                                itemValue="#{genre}" 
+                                converter="genreConverter"
+                                forceSelection="true" immediate="true" dropdown="true">
+                    <p:ajax event="itemSelect" update="musiciansByGenreTable" listener="#{mainPageViewManagedBean.genreSelect}"/>
+                </p:autoComplete>
+                <p:dataTable id="musiciansByGenreTable" value="#{mainPageViewManagedBean.searchMusicianByGenre()}" var="musician" styleClass="table, centered">
+                    <p:column>  
+                        <f:facet name="header">Name</f:facet>  
+                        <h:outputText value="#{musician.name}" />  
+                    </p:column>
+                    <p:column>  
+                        <f:facet name="header">Link</f:facet>  
+                        <h:outputText value="#{musician.link}" />  
+                    </p:column>
+                </p:dataTable>
+                <p:panel header="Export Data">
+                    <h:commandLink value="Export as PDF">
+                        <p:graphicImage value="/images/pdf.png"/>
+                        <p:dataExporter type="pdf" target="musiciansByGenreTable" fileName="musicians by genre"/>
+                    </h:commandLink>
+                </p:panel>
+            </p:dialog>
+
+            <p:dialog id="musiciansByMoodDialog" header="Musicians By Mood" widgetVar="musiciansByMoodDialog" showEffect="fade" hideEffect="fade" width="600">
+                <p:autoComplete id="musiciansByMoodAutoComplete" 
+                                value="#{mainPageViewManagedBean.selectedMood}" 
+                                completeMethod="#{mainPageViewManagedBean.completeMoods}" 
+                                var="mood" itemLabel="#{mood.name}" 
+                                itemValue="#{mood}" 
+                                converter="moodConverter"
+                                forceSelection="true" immediate="true" dropdown="true">
+                    <p:ajax event="itemSelect" update="musiciansByMoodTable" listener="#{mainPageViewManagedBean.moodSelect}"/>
+                </p:autoComplete>
+                <p:dataTable id="musiciansByMoodTable" value="#{mainPageViewManagedBean.searchMusicianByMood()}" var="musician" styleClass="table, centered">
+                    <p:column>  
+                        <f:facet name="header">Name</f:facet>  
+                        <h:outputText value="#{musician.name}" />  
+                    </p:column>
+                    <p:column>  
+                        <f:facet name="header">Link</f:facet>  
+                        <h:outputText value="#{musician.link}" />  
+                    </p:column>
+                </p:dataTable>
+                <p:panel header="Export Data">
+                    <h:commandLink value="Export as PDF">
+                        <p:graphicImage value="/images/pdf.png"/>
+                        <p:dataExporter type="pdf" target="musiciansByMoodTable" fileName="musicians by mood"/>
+                    </h:commandLink>
+                </p:panel>
             </p:dialog>
         </h:form>            
     </h:body>
