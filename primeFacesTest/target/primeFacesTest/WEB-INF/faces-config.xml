@@ -50,4 +50,8 @@
         <converter-class>converters.GenreConverter</converter-class>
     </converter>
     
+    <converter>
+        <converter-id>stringConverter</converter-id>
+        <converter-class>converters.StringConverter</converter-class>
+    </converter>
 </faces-config>

@@ -29,6 +29,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 import models.entitys.*;
+import models.pages.MainPageModelManagedBean;
 
 /**
  *
@@ -41,13 +42,15 @@ public class ControllerManagedBean implements Serializable {
     private List<BindedModel> maintable;
     private BindedModel[] selectedRows; // why array?
     @Inject
+    private MainPageModelManagedBean mainPageViewManagedBean;
+    @Inject
     private EditPageModelManagedBean editPageViewManagedBean;
     @Inject
     private AddDialogModelManagedBean addDialogModelManagedBean;
     private String searchString;
 
     public BindedModel getSelectedRow() {
-        if (selectedRows == null) {
+        if ((selectedRows == null) || (selectedRows.length == 0)) {
             return null;
         }
         return selectedRows[0];
@@ -142,9 +145,22 @@ public class ControllerManagedBean implements Serializable {
         return Utils.searchGroupRating();
     }
     
-    public List<Map.Entry<String, Double>> searchTopAlbums() {
+    public List<Map.Entry<String, String>> searchAlbumContent() {
+        BindedModel selectedRow = this.getSelectedRow();
+        if (selectedRow != null)
+            return Utils.searchAlbumContent(selectedRow.getAlbumName());
+        else
+            return null;
+    }
+    
+    public List<String> searchMusicianAlbums(String name) {
+        return Utils.searchMusicianAlbums(name);
+    }
+    
+    public List<Map.Entry<String, Double>> searcRatedAlbums() {
         return Utils.searchAlbumRating();
     }
+    
 
     public List<MusicianModel> completeMusician(String query, List<MusicianModel> alreadyChoosen) {
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeMusician: Started!");

@@ -76,9 +76,11 @@ and open the template in the editor.
                         <p:inputText id="search" size="60" value="#{controllerManagedBean.searchString}" />
                         <p:commandButton value="Search" update="basictable" action="#{controllerManagedBean.search()}"/>
                     </h:panelGrid>
-                    <h:panelGrid columns="2" cellpadding="5" styleClass="centered">
-                        <p:commandLink value="Top 20 Groups" update="topGroupsdialog" oncomplete="topGroupsDialog.show()"/>
-                        <p:commandLink value="Top 20 Albums" update="topAlbumssdialog" oncomplete="topAlbumssdialog.show()"/>
+                    <h:panelGrid columns="4" cellpadding="5" styleClass="centered">
+                        <p:commandLink value="Top Group" update="topGroupsdialog" oncomplete="topGroupsDialog.show()"/>
+                        <p:commandLink value="Selected Album Content" update="albumContentdialog" oncomplete="albumContentdialog.show()"/>
+                        <p:commandLink value="Selected Musician Albums" update="musicianAlbumsDialog" oncomplete="musicianAlbumsDialog.show()"/>
+                        <p:commandLink value="Rated Albums" update="ratedAlbumsDialog" oncomplete="ratedAlbumsDialog.show()"/>
                     </h:panelGrid>
 
                 </p:layoutUnit>
@@ -328,18 +330,53 @@ and open the template in the editor.
                 </h:panelGrid>  
             </p:dialog>
 
-            <p:dialog id="topGroupsdialog" header="Top 20 Groups" widgetVar="topGroupsDialog" showEffect="fade" hideEffect="fade" width="600">
+            <p:dialog id="topGroupsdialog" header="Top Groups" widgetVar="topGroupsDialog" showEffect="fade" hideEffect="fade" width="600">
                 <p:dataList value="#{controllerManagedBean.searchTopGroups()}" var="group" type="ordered" >
-                    #{group.key}, 
+                    #{group.key}, rate 
                     <h:outputText value="#{group.value}">
                         <f:convertNumber pattern = "##,##"/>
                     </h:outputText>
                 </p:dataList>
+            </p:dialog> 
+
+            <p:dialog id="albumContentdialog" header="Selected Album Content" widgetVar="albumContentdialog" showEffect="fade" hideEffect="fade" width="600">
+                <p:dataTable  id="albumContenttable" var="row" value="#{controllerManagedBean.searchAlbumContent()}"  styleClass="table, centered">  
+                    <p:column id="modelHeader">  
+                        <f:facet name="header">Group</f:facet>  
+                        <h:outputText value="#{row.key}" />  
+                    </p:column>  
+
+                    <p:column>  
+                        <f:facet name="header">Track</f:facet>  
+                        <h:outputText value="#{row.value}" />  
+                    </p:column>  
+                </p:dataTable> 
             </p:dialog>
 
-            <p:dialog id="topAlbumssdialog" header="Top 20 Albums" widgetVar="topAlbumssdialog" showEffect="fade" hideEffect="fade" width="600">
-                <p:dataList value="#{controllerManagedBean.searchTopAlbums()}" var="album" type="ordered">
-                    #{album.key}, #{album.value}
+            <p:dialog id="musicianAlbumsDialog" header="Musician albums" widgetVar="musicianAlbumsDialog" showEffect="fade" hideEffect="fade" width="600">
+                <p:autoComplete id="musicianAlbumsAutoComplete" 
+                                value="#{mainPageViewManagedBean.selectedMusician}" 
+                                completeMethod="#{mainPageViewManagedBean.completeMusicians}" 
+                                var="member" itemLabel="#{member.name}" 
+                                itemValue="#{member}" 
+                                converter="musicianConverter"
+                                forceSelection="true" immediate="true" dropdown="true">
+                                    <p:ajax event="itemSelect" update="musicianAlbumstable" listener="#{mainPageViewManagedBean.musicianSelect}"/>
+                                </p:autoComplete>
+                <p:dataTable  id="musicianAlbumstable" var="row" value="#{mainPageViewManagedBean.searchMusicianAlbums()}"  styleClass="table, centered">  
+                    <p:column id="modelHeader">  
+                        <f:facet name="header">Album</f:facet>  
+                        <h:outputText value="#{row}" />  
+                    </p:column>
+                </p:dataTable> 
+            </p:dialog>
+            
+            <p:dialog id="ratedAlbumsDialog" header="Rated albums" widgetVar="ratedAlbumsDialog" showEffect="fade" hideEffect="fade" width="600">
+                <p:dataList value="#{controllerManagedBean.searcRatedAlbums()}" var="album" type="ordered" >
+                    #{album.key}, rate 
+                    <h:outputText value="#{album.value}">
+                        <f:convertNumber pattern = "##,##"/>
+                    </h:outputText>
                 </p:dataList>
             </p:dialog>
         </h:form>            
