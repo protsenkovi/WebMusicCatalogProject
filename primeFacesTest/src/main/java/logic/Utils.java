@@ -56,12 +56,10 @@ public class Utils {
                     + "ORDER BY rated_group.rate DESC";
             statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
-            if (!resultSet.next()) {
-                throw new EJBException("Can't load data");
-            }
-            String name = resultSet.getString(1);
-            double rate = resultSet.getDouble(2);
+
             while (resultSet.next()) {
+                String name = resultSet.getString(1);
+                double rate = resultSet.getDouble(2);
                 groups.add(new SimpleEntry(name, rate));
             }
         } catch (NamingException ex) {
@@ -103,12 +101,10 @@ public class Utils {
                     + "ORDER BY rated_albums.rate DESC";
             statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
-            if (!resultSet.next()) {
-                throw new EJBException("Can't load data");
-            }
-            String name = resultSet.getString(1);
-            double rate = resultSet.getDouble(2);
+
             while (resultSet.next()) {
+                String name = resultSet.getString(1);
+                double rate = resultSet.getDouble(2);
                 albums.add(new SimpleEntry(name, rate));
             }
         } catch (NamingException ex) {
