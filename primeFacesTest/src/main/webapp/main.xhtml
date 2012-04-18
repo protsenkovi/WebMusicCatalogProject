@@ -70,7 +70,7 @@ and open the template in the editor.
         <label style="margin:10px auto;text-align: center;font-size: 30pt;font-family: Arial;" >Web Music Catalog</label>
         <h:form id="form" styleClass="mainbody">
             <p:layout styleClass="height: 100%">
-                <p:layoutUnit position="north" resizable="false" size="90" id="Head" styleClass="top">
+                <p:layoutUnit position="north" resizable="false" size="100" id="Head" styleClass="top">
 
                     <h:panelGrid columns="2" cellpadding="5" styleClass="centered">
                         <p:inputText id="search" size="60" value="#{controllerManagedBean.searchString}" />
@@ -79,7 +79,7 @@ and open the template in the editor.
                     <h:panelGrid columns="6" cellpadding="6" styleClass="centered">
                         <p:commandLink value="Top Group" update="topGroupsdialog" oncomplete="topGroupsDialog.show()"/>
                         <p:commandLink value="Selected Album Content" update="albumContentdialog" oncomplete="albumContentdialog.show()"/>
-                        <p:commandLink value="Selected Musician Albums" update="musicianAlbumsDialog" oncomplete="musicianAlbumsDialog.show()"/>
+                        <p:commandLink value="Musician Albums" update="musicianAlbumsDialog" oncomplete="musicianAlbumsDialog.show()"/>
                         <p:commandLink value="Rated Albums" update="ratedAlbumsDialog" oncomplete="ratedAlbumsDialog.show()"/>
                         <p:commandLink value="Musicians by genre" update="musiciansByGenreDialog" oncomplete="musiciansByGenreDialog.show()"/>
                         <p:commandLink value="Musicians by mood" update="musiciansByMoodDialog" oncomplete="musiciansByMoodDialog.show()"/>
