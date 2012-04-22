@@ -140,13 +140,17 @@ public class AlbumBean implements EntityBean {
      */
     public void ejbStore() {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            String query = "UPDATE albums SET name = '" + this.name + "', \"group\" = " + this.group + ", genre = " + this.genre + " WHERE id = " + this.id;
+            String query = "UPDATE albums SET name = ?, \"group\" = ?, genre = ? WHERE id = ?";
+            statement = connection.prepareStatement(query);            
+            statement.setString(1, name);
+            statement.setLong(2, group);
+            statement.setLong(3, genre);
+            statement.setLong(4, id);
             Logger.getLogger(AlbumBean.class.getName()).log(Level.INFO, "VLEU AlbumBean ejbStore Executing query: " + query);
-            statement.executeQuery(query);
+            statement.executeQuery();
             Logger.getLogger(AlbumBean.class.getName()).log(Level.INFO, "VLEU AlbumBean ejbStore Album id: " + this.id + " name: " + this.name + " stored.");
         } catch (SQLException e) {
             Logger.getLogger(AlbumBean.class.getName()).log(Level.WARNING, "Album id: " + this.id + " name: " + this.name + " NOT stored!");
@@ -260,19 +264,23 @@ public class AlbumBean implements EntityBean {
 
     public Long ejbCreate(String name, long groupId, long genreId) {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         String query = "";
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            query = "SELECT album_id.NEXTVAL FROM dual";
+            query = "SELECT album_id.NEXTVAL FROM dual";            
             ResultSet result = statement.executeQuery(query);
             if (result.next()) {
                 long newId = result.getLong(1);
                 Logger.getLogger(AlbumBean.class.getName()).log(Level.INFO, "VLEU AlbumBean ejbCreate newId: " + newId + "Executed query: " + query);
                 query = "INSERT INTO albums (id, name, \"group\", genre) "
-                      + "VALUES (" + newId + ", '" + name + "' ," + groupId + ", " + genreId + ")";
-                statement.executeQuery(query);
+                      + "VALUES (? ,? ,? ,? )";
+                statement = connection.prepareStatement(query);
+                statement.setLong(1, newId);
+                statement.setString(2, name);
+                statement.setLong(3, groupId);
+                statement.setLong(4, genreId);
+                statement.executeQuery();
                 connection.commit();
                 this.id = newId; //????? Bean life cycle misunderstanding!
                 return Long.valueOf(newId);

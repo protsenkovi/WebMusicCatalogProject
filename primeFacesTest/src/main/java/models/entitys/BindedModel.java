@@ -15,12 +15,13 @@ public class BindedModel implements Serializable, Comparable {
 //группа | альбом | трек | средний рейтинг | настроение | жанр
     private long trackId;
     private long albumId;
-    private long groupid;
+    private long groupId;
     private long genreId;
     private String trackName;
     private String albumName;
     private String groupName;
     private double avrrate;
+    private double rate;
     private int mood;
     private String moodName;
     private String genreName;
@@ -34,7 +35,7 @@ public class BindedModel implements Serializable, Comparable {
     public BindedModel(long trackId, long albumId, long groupid, long genreId, String trackName, String albumName, String groupName, double avrrate, int mood, String moodName, String genreName) {
         this.trackId = trackId;
         this.albumId = albumId;
-        this.groupid = groupid;
+        this.groupId = groupid;
         this.genreId = genreId;
         this.trackName = trackName;
         this.albumName = albumName;
@@ -45,6 +46,14 @@ public class BindedModel implements Serializable, Comparable {
         this.genreName = genreName;
     }
 
+    public double getRate() {
+        return rate;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
+    
     public void setAlbumId(long albumId) {
         this.albumId = albumId;
     }
@@ -70,7 +79,7 @@ public class BindedModel implements Serializable, Comparable {
     }
 
     public void setGroupid(long groupid) {
-        this.groupid = groupid;
+        this.groupId = groupid;
     }
 
     public void setMood(int mood) {
@@ -114,7 +123,7 @@ public class BindedModel implements Serializable, Comparable {
     }
 
     public long getGroupid() {
-        return groupid;
+        return groupId;
     }
 
     public int getMood() {
@@ -153,5 +162,10 @@ public class BindedModel implements Serializable, Comparable {
         if (!(obj instanceof BindedModel))
             return false;        
         return this.trackId == ((BindedModel)obj).getTrackId();
+    }
+
+    @Override
+    public String toString() {
+        return "track = " + this.trackId + " " + this.trackName;
     }
 }

@@ -5,10 +5,12 @@
 package converters;
 
 import java.io.StringReader;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -33,11 +35,17 @@ public class MoodConverter implements Converter {
         if (value.trim().equals("")) {
             return null;
         }
-        Scanner scanner = new Scanner(new StringReader(value)); 
-        scanner.useDelimiter("<:>");
-        int id = scanner.nextInt();
-        String name = scanner.next();
-        return new MoodModel(id, name);
+        try {
+            Scanner scanner = new Scanner(new StringReader(value));
+            scanner.useDelimiter("<:>");
+            int id = scanner.nextInt();
+            String name = scanner.next();
+            return new MoodModel(id, name);
+        } catch (InputMismatchException e) {
+            Logger.getLogger(MusicianConverter.class.getName()).log(Level.WARNING, "VLEU CONVERTER input value of mood converter = {0}", value);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Mood has no been selected from list!"));
+        }
+        return null;
     }
 
     @Override

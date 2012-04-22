@@ -5,6 +5,7 @@
 package converters;
 
 import java.io.StringReader;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,12 +34,17 @@ public class GenreConverter implements Converter {
         Logger.getLogger(GenreConverter.class.getName()).log(Level.INFO, "VLEU CONVERTER Genre input value of Genre converter = {0}", value);
         if (value.trim().equals("")) {
             return null;
-        } 
-        Scanner scanner = new Scanner(new StringReader(value)); 
-        scanner.useDelimiter("<:>");
-        int id = scanner.nextInt();
-        String name = scanner.next();
-        return new GenreModel(id, name);
+        }
+        try {
+            Scanner scanner = new Scanner(new StringReader(value));
+            scanner.useDelimiter("<:>");
+            int id = scanner.nextInt();
+            String name = scanner.next();
+            return new GenreModel(id, name);
+        } catch (InputMismatchException e) {
+            Logger.getLogger(MusicianConverter.class.getName()).log(Level.WARNING, "VLEU CONVERTER input value of genre converter = {0}", value);
+        }
+        return null;
     }
 
     @Override
@@ -48,7 +54,7 @@ public class GenreConverter implements Converter {
             return "";
         } else {
             return "" + ((GenreModel) value).getId() + "<:>"
-                      + ((GenreModel) value).getName() + "<:>";
+                    + ((GenreModel) value).getName() + "<:>";
         }
     }
 }

@@ -5,6 +5,7 @@
 package converters;
 
 import java.io.StringReader;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,13 +33,18 @@ public class MusicianConverter implements Converter {
         Logger.getLogger(MusicianConverter.class.getName()).log(Level.INFO, "VLEU CONVERTER Musician input value of musician converter = {0}", value);
         if (value.trim().equals("")) {
             return null;
-        } 
-        Scanner scanner = new Scanner(new StringReader(value)); 
-        scanner.useDelimiter("<:>");
-        int id = scanner.nextInt();
-        String name = scanner.next();
-        String link = scanner.next();
-        return new MusicianModel(id, name, link);
+        }
+        try {
+            Scanner scanner = new Scanner(new StringReader(value));
+            scanner.useDelimiter("<:>");
+            int id = scanner.nextInt();
+            String name = scanner.next();
+            String link = scanner.next();
+            return new MusicianModel(id, name, link);
+        } catch (InputMismatchException e) {
+            Logger.getLogger(MusicianConverter.class.getName()).log(Level.WARNING, "VLEU CONVERTER input value of musician converter = {0}", value);
+        }
+        return null;
     }
 
     @Override
@@ -48,8 +54,8 @@ public class MusicianConverter implements Converter {
             return "";
         } else {
             return "" + ((MusicianModel) value).getId() + "<:>"
-                      + ((MusicianModel) value).getName() + "<:>"
-                      + ((MusicianModel) value).getLink() + "<:>";
+                    + ((MusicianModel) value).getName() + "<:>"
+                    + ((MusicianModel) value).getLink() + "<:>";
         }
     }
 }

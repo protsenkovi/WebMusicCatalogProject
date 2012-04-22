@@ -14,13 +14,16 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import logic.ControllerManagedBean;
+import models.entitys.*;
 import org.primefaces.component.autocomplete.AutoComplete;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.UnselectEvent;
+import javax.faces.event.ActionEvent;
+
 /**
  *
  * @author Klaritin
@@ -33,9 +36,18 @@ public class EditPageModelManagedBean implements Serializable {
     private GroupModel group;
     private AlbumModel album;
     private TrackModel track;
+    private GenreModel genre;
     private MoodModel mood;
     @Inject
     private ControllerManagedBean controllerManagedBean;
+
+    public GenreModel getGenre() {
+        return genre;
+    }
+
+    public void setGenre(GenreModel genre) {
+        this.genre = genre;
+    }
 
     public MoodModel getMood() {
         return mood;
@@ -45,7 +57,7 @@ public class EditPageModelManagedBean implements Serializable {
         Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU EditPageModelManagedBean SETTER Mood:  {0}", mood);
         this.mood = mood;
     }
-    
+
     public List<MusicianModel> getMembers() {
         return members;
     }
@@ -86,10 +98,12 @@ public class EditPageModelManagedBean implements Serializable {
     public EditPageModelManagedBean() {
     }
 
-    public void albumChanged(SelectEvent event) {
+    public void albumSelected(SelectEvent event) {
         Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU albumChanged ");
         album = (AlbumModel) event.getObject();
+        Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU album " + album);
         group = controllerManagedBean.getGroupModelById(album.getGroup());
+        Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU group " + group);
         members = controllerManagedBean.getMembersByGroupId(group.getId());
         AutoComplete ac = (AutoComplete) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:membersAutoComplete"); //solving problem with update fail
         ac.resetValue();                                                                                                            //after focusing autocomplete
@@ -102,7 +116,7 @@ public class EditPageModelManagedBean implements Serializable {
         group = (GroupModel) event.getObject();
         members = controllerManagedBean.getMembersByGroupId(group.getId());
     }
-    
+
     public void moodCompleted() {
         Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU moodCompleted ");
     }
@@ -122,4 +136,42 @@ public class EditPageModelManagedBean implements Serializable {
     public List<MoodModel> completeMoods(String query) {
         return controllerManagedBean.completeMoods(query, this.mood);
     }
+
+    public List<GenreModel> completeGenres(String query) {
+        return controllerManagedBean.completeGenres(query, genre);
+    }
+
+    public void saveHandler(ActionEvent event) {
+        controllerManagedBean.updateGroup(group, members);
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Group " + group.getName()+ " saved."));
+        controllerManagedBean.updateAlbum(album, genre, group);
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Album " + album.getName()+ " saved."));
+        controllerManagedBean.updateTrack(track, album, mood);
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Track " + track.getName()+ " saved."));
+    }
+    
+//    public void albumValueChanged() {
+//        Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU album value changed ");
+//        AutoComplete ac = (AutoComplete) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:trackAlbums"); //solving problem with update fail
+//        ac.resetValue();
+//    }
+//
+//    public void moodValueChanged() {
+//        Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU mood value changed ");
+//        AutoComplete ac = (AutoComplete) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:trackMood"); //solving problem with update fail
+//        ac.resetValue();
+//        ac.processUpdates(FacesContext.getCurrentInstance());
+//    }
+//
+//    public void genreValueChanged() {
+//        Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU genre value changed ");
+//        AutoComplete ac = (AutoComplete) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:albumGenre"); //solving problem with update fail
+//        ac.resetValue();
+//    }
+//
+//    public void groupValueChanged() {
+//        Logger.getLogger(EditPageModelManagedBean.class.getName()).log(Level.INFO, "VLEU group value changed ");
+//        AutoComplete ac = (AutoComplete) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:albumGroups"); //solving problem with update fail
+//        ac.resetValue();
+//    }
 }

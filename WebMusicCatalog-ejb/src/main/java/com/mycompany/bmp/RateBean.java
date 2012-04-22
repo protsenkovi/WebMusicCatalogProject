@@ -258,7 +258,7 @@ public class RateBean implements EntityBean {
                 long newId = result.getLong(1);
                 Logger.getLogger(RateBean.class.getName()).log(Level.INFO, "VLEU RateBean ejbCreate newId: " + newId + "Executed query: " + query);
                 query = "INSERT INTO rates (id, track, value) "
-                        + "VALUES (" + newId + ", " + track + " , " + value + ")";
+                        + "VALUES (" + newId + ", " + trackId + " , " + value + ")";
                 statement.executeQuery(query);
                 connection.commit();
                 this.id = newId; //????? Bean life cycle misunderstanding!

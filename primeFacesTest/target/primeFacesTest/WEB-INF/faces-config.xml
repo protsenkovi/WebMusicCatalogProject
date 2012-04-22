@@ -17,7 +17,7 @@
     </navigation-rule>
     
     <navigation-rule>
-        <from-view-id>/edit.xhtml</from-view-id>
+        <from-view-id>/*</from-view-id>
         <navigation-case>
             <from-outcome>Main</from-outcome>
             <to-view-id>/main.xhtml</to-view-id>

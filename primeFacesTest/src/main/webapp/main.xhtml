@@ -14,43 +14,37 @@ and open the template in the editor.
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/style.css" />
         <style type="text/css">
             .nestedUnit {
+                margin: 0px;
                 border:0px none !important;
+                overflow: hidden;
+            }
+
+            .menu {
+                border:0px none !important;
+                margin-bottom: 10px;
+                margin-top: 0px;
             }
 
             .ui-layout-center .ui-layout-resizer {
                 border:1px solid #A8A8A8 !important;
             }
 
-            html, body{
-                height: 1080px;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                overflow: hidden;
-            } 
-
             body {
                 font-family: arial;
                 font-size: 10pt;
-                /* OPTIONAL */
-                /*min-width: 600px;*/
-                /*min-height: 500px;*/
+                text-align: left;
                 overflow: auto;
             } 
 
             .mainbody {
                 min-height: 800px;
                 height:auto;
+                text-align: center;
             }
 
             .centered {
                 margin:0px auto;
                 text-align: center;
-            }
-
-            .table {
-                width: 300px;
-                height: auto;                
             }
 
             .title {
@@ -60,18 +54,26 @@ and open the template in the editor.
                 font-family: Arial;
             }
 
-            .top {
-                height: 90;
+            .tools {
+                margin-bottom: 0px; 
+            }
+
+            .table {
+                width: 100%;
+            }
+
+            .ui-datatable-scrollable .ui-datatable-scrollable-header-box, .ui-datatable-scrollable .ui-datatable-scrollable-footer-box {
+                float: left;
+                padding-right: 17px;
             }
         </style>
     </h:head>
 
     <h:body onload="#{controllerManagedBean.search()}">
-        <label style="margin:10px auto;text-align: center;font-size: 30pt;font-family: Arial;" >Web Music Catalog</label>
-        <h:form id="form" styleClass="mainbody">
-            <p:layout styleClass="height: 100%">
-                <p:layoutUnit position="north" resizable="false" size="90" id="Head" styleClass="top">
-
+        <h1 style="text-align: center; margin: 5px auto; font-family: Arial;" >Web Music Catalog</h1>
+        <h:form id="form">
+            <p:layout styleClass="mainbody">
+                <p:layoutUnit id="Head" position="north" resizable="false" minSize="100" styleClass="nestedUnit">
                     <h:panelGrid columns="2" cellpadding="5" styleClass="centered">
                         <p:inputText id="search" size="60" value="#{controllerManagedBean.searchString}" />
                         <p:commandButton value="Search" update="basictable" action="#{controllerManagedBean.search()}"/>
@@ -80,50 +82,55 @@ and open the template in the editor.
                         <p:commandLink value="Top 20 Groups" update="topGroupsdialog" oncomplete="topGroupsDialog.show()"/>
                         <p:commandLink value="Top 20 Albums" update="topAlbumssdialog" oncomplete="topAlbumssdialog.show()"/>
                     </h:panelGrid>
-
                 </p:layoutUnit>
 
-                <p:layoutUnit id="Body" position="center" styleClass="mainbody" >
-                    <p:layout>
-                        <p:layoutUnit position="center"  resizable="true" styleClass="nestedUnit">
-                            <p:panel>
-                                <p:commandButton id="addTrackButton" value="Add" icon="ui-icon-squaresmall-plus"  
-                                                 update=":form:addisplay" oncomplete="addDialog.show()" action="#{addDialogModelManagedBean.modeTrack()}"/>  
-                                <p:commandButton id="editButton" value="Edit" icon="ui-icon-pencil"  
-                                                 action="#{controllerManagedBean.edit}" ajax="false"/>
-                                <p:commandButton id="deleteButton" value="Delete" icon="ui-icon-pencil"  
-                                                 action="#{controllerManagedBean.deleteTracks()}" ajax="false" update="basictable"/>
-                            </p:panel>
-                            <p:dataTable  id="basictable" var="row" value="#{controllerManagedBean.maintable}"  styleClass="table, centered"
-                                          selection="#{controllerManagedBean.selectedRows}" rowKey="#{row.trackId}" selectionMode="multiple">  
-                                <p:column id="modelHeader">  
+                <p:layoutUnit id="Body" position="center" minSize="800" styleClass="nestedUnit">
+                    <p:layout styleClass="margin: 0px;">
+                        <p:layoutUnit position="center"  resizable="true" styleClass="nestedUnit" >
+                            <p:dataTable  id="basictable" var="row" value="#{controllerManagedBean.maintable}" styleClass="table"
+                                          selection="#{controllerManagedBean.selectedRows}" rowKey="#{row.trackId}" selectionMode="multiple"
+                                          scrollHeight="505" scrollable="true">  
+                                <f:facet name="header">
+                                    <p:commandButton id="addTrackButton" value="Add" icon="ui-icon-squaresmall-plus"  
+                                                     update=":form:addisplay" oncomplete="addDialog.show()" action="#{addDialogModelManagedBean.modeTrack()}"/>  
+                                    <p:commandButton id="editButton" value="Edit" icon="ui-icon-pencil"  
+                                                     action="#{controllerManagedBean.edit}" ajax="false"/>
+                                    <p:commandButton id="deleteButton" value="Delete" icon="ui-icon-pencil"  
+                                                     action="#{controllerManagedBean.deleteTracks()}" update="basictable"/>
+                                </f:facet>
+
+                                <p:column style="width: 500px">  
                                     <f:facet name="header">Group</f:facet>  
                                     <h:outputText value="#{row.groupName}" />  
                                 </p:column>  
 
-                                <p:column>  
+                                <p:column style="width: 500px">  
                                     <f:facet name="header">Album</f:facet>  
                                     <h:outputText value="#{row.albumName}" />  
                                 </p:column>  
 
-                                <p:column>  
+                                <p:column style="width: 500px">  
                                     <f:facet name="header">Track</f:facet>  
                                     <h:outputText value="#{row.trackName}" />  
                                 </p:column>
 
-                                <p:column>  
+                                <p:column style="width: 200px">  
                                     <f:facet name="header">Rate</f:facet>  
                                     <h:outputText value="#{row.avrrate}">
                                         <f:convertNumber pattern = "##,##"/>
-                                    </h:outputText>  
+                                    </h:outputText> 
+                                    <p:rating value="#{row.rate}" >
+                                        <f:attribute name="trackId" value="#{row.trackId}"/>
+                                        <p:ajax event="rate"  update="basictable" immediate="true" listener="#{controllerManagedBean.rateTrack}"/>                                       
+                                    </p:rating>
                                 </p:column>
 
-                                <p:column>  
+                                <p:column style="width: 500px">  
                                     <f:facet name="header">Genre</f:facet>  
                                     <h:outputText value="#{row.genreName}" />  
                                 </p:column>
 
-                                <p:column>  
+                                <p:column style="width: 500px">  
                                     <f:facet name="header">Mood</f:facet>  
                                     <h:outputText value="#{row.moodName}" />  
                                 </p:column>
@@ -328,8 +335,8 @@ and open the template in the editor.
                 </h:panelGrid>  
             </p:dialog>
 
-            <p:dialog id="topGroupsdialog" header="Top 20 Groups" widgetVar="topGroupsDialog" showEffect="fade" hideEffect="fade" width="600">
-                <p:dataList value="#{controllerManagedBean.searchTopGroups()}" var="group" type="ordered" >
+            <p:dialog id="topGroupsdialog" header="Top 20 Groups" widgetVar="topGroupsDialog" styleClass="text-align: left;" showEffect="fade" hideEffect="fade" width="600">
+                <p:dataList value="#{controllerManagedBean.searchTopGroups()}" var="group" type="ordered" styleClass="text-align: left;">
                     #{group.key}, 
                     <h:outputText value="#{group.value}">
                         <f:convertNumber pattern = "##,##"/>
@@ -337,9 +344,12 @@ and open the template in the editor.
                 </p:dataList>
             </p:dialog>
 
-            <p:dialog id="topAlbumssdialog" header="Top 20 Albums" widgetVar="topAlbumssdialog" showEffect="fade" hideEffect="fade" width="600">
-                <p:dataList value="#{controllerManagedBean.searchTopAlbums()}" var="album" type="ordered">
-                    #{album.key}, #{album.value}
+            <p:dialog id="topAlbumssdialog" header="Top 20 Albums" widgetVar="topAlbumssdialog" styleClass="text-align: left;" showEffect="fade" hideEffect="fade" width="600">
+                <p:dataList value="#{controllerManagedBean.searchTopAlbums()}" var="album" type="ordered" styleClass="text-align: left;">
+                    #{album.key}, 
+                    <h:outputText value="#{album.value}">
+                        <f:convertNumber pattern = "##,##"/>
+                    </h:outputText>
                 </p:dataList>
             </p:dialog>
         </h:form>            
