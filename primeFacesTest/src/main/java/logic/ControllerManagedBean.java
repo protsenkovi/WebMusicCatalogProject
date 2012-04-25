@@ -23,6 +23,7 @@ import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -43,6 +44,7 @@ public class ControllerManagedBean implements Serializable {
 
     private List<BindedModel> maintable;
     private BindedModel[] selectedRows; // why array?
+    private Map<Long, Long> rated;
     @Inject
     private EditPageModelManagedBean editPageViewManagedBean;
     @Inject
@@ -83,6 +85,7 @@ public class ControllerManagedBean implements Serializable {
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CONSTRUCTOR ControllerManagedBean!");
         searchString = "";
         maintable = new ArrayList<BindedModel>();
+        rated = new HashMap<Long, Long>();
     }
 
     public void search() {
@@ -149,10 +152,9 @@ public class ControllerManagedBean implements Serializable {
                 }
                 Collections.sort(maintable);
             }
-            
-            DataTable comp =  (DataTable)FacesContext.getCurrentInstance().getViewRoot().findComponent("form:basictable"); //solving problem with update fail
-            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SEARCH: compent = " + comp);
-            comp.restoreState(FacesContext.getCurrentInstance(), comp.saveState(FacesContext.getCurrentInstance()));
+
+//            DataTable comp =  (DataTable)FacesContext.getCurrentInstance().getViewRoot().findComponent("form:basictable"); //solving problem with update fail
+//            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SEARCH: compent = " + comp);   
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SEARCH: Ended!");
         } catch (NamingException ex) {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -415,7 +417,6 @@ public class ControllerManagedBean implements Serializable {
 //            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
-
     public long createTrack(TrackModel trackModel, AlbumModel albumModel, MoodModel moodModel) {
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE TRACK: Started!");
         try {
@@ -482,7 +483,7 @@ public class ControllerManagedBean implements Serializable {
                 return album.getId().longValue();
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Album has not been created!"));
-            }           
+            }
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE ALBUM: Ended!!!");
         } catch (NamingException ex) {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -821,22 +822,59 @@ public class ControllerManagedBean implements Serializable {
         }
         search(); // refactoring to main page model
     }
-    
+
     public void rateTrack(RateEvent event) {
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE RATE: Started!");
         try {
-            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: -------Creating rate-------");
             InitialContext ic = new InitialContext();
-            Object obj = ic.lookup("ejb/RateBean");
-            RateBeanRemoteHome rateHome = (RateBeanRemoteHome) PortableRemoteObject.narrow(obj, RateBeanRemoteHome.class);
-            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: rateHome = {0}", rateHome);
-            if (rateHome != null) {
-                Map<String, Object> attrs =  event.getComponent().getAttributes();
-                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: ratingTrack id = {0}", attrs.get("trackId"));
-                Long trackId = (Long)attrs.get("trackId");                
-                rateHome.create(trackId, ((Double)event.getRating()).intValue()); 
+            UIComponent rateComponent = event.getComponent();
+            Map<String, Object> attrs = rateComponent.getAttributes();
+            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: ratingTrack id = {0}", attrs.get("trackId"));
+            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: rateComponent component = {0}", rateComponent);
+            Long trackId = (Long) attrs.get("trackId");
+            Integer rating = ((Double) event.getRating()).intValue();
+            if (!rated.containsKey(trackId)) {
+                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: -------Creating rate-------");
+                Object obj = ic.lookup("ejb/RateBean");
+                RateBeanRemoteHome rateHome = (RateBeanRemoteHome) PortableRemoteObject.narrow(obj, RateBeanRemoteHome.class);
+                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: rateHome = {0}", rateHome);
+                if (rateHome != null) {
+                    Rate rate = rateHome.create(trackId, rating.intValue());
+                    rated.put(trackId, rate.getId());
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Tracks have not been rated!"));
+                }
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Tracks have not been rated!"));
+                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: -------Updating rate-------");
+                Object obj = ic.lookup("ejb/RateBean");
+                RateBeanRemoteHome rateHome = (RateBeanRemoteHome) PortableRemoteObject.narrow(obj, RateBeanRemoteHome.class);
+                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: rateHome = {0}", rateHome);
+                if (rateHome != null) {
+                    Long id = rated.get(trackId);
+                    if (rating == 0) {
+                        rateHome.delete(id);
+                        rated.remove(trackId);
+                    } else {
+                        Rate rate = rateHome.findByPrimaryKey(id);
+                        Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: rate = {0}", rate);
+                        rate.setValue(rating);
+                    }
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Tracks have not been rated!"));
+                }
+            }
+
+            Object obj = ic.lookup("ejb/TrackBean");
+            TrackBeanRemoteHome trackHome = (TrackBeanRemoteHome) PortableRemoteObject.narrow(obj, TrackBeanRemoteHome.class);
+            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE: trackHome = {0}", trackHome);
+            if (trackHome != null) {
+                Track track = (Track) trackHome.findByPrimaryKey(trackId);
+                for (BindedModel row : maintable) {
+                    if (row.getTrackId() == trackId) {
+                        row.setAvrrate(track.getAvgRate());
+                        break;
+                    }
+                }
             }
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Saved!"));
@@ -847,8 +885,9 @@ public class ControllerManagedBean implements Serializable {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        search();
+        } catch (FinderException ex) {
+            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public GroupModel getGroupModelById(long id) {

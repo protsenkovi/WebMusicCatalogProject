@@ -18,6 +18,6 @@ public interface Rate extends EJBObject {
     public Long getTrack() throws RemoteException;
     public void setTrack(Long trackId) throws RemoteException;
 
-    public Long getValue() throws RemoteException;
+    public Integer getValue() throws RemoteException;
     public void setValue(Integer value) throws RemoteException;
 }

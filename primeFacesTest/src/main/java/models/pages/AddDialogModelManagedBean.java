@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import logic.ControllerManagedBean;
 import models.entitys.*;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -177,6 +178,7 @@ public class AddDialogModelManagedBean implements Serializable {
     }
 
     public AlbumModel getAlbum() {
+        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU GetALBUM {0}", album);
         return album;
     }
 
@@ -189,6 +191,7 @@ public class AddDialogModelManagedBean implements Serializable {
     }
 
     public void setAlbum(AlbumModel album) {
+        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU SetALBUM {0}", album);
         this.album = album;
         this.group = new GroupModel(album.getGroup(), null);
         this.genre = new GenreModel(album.getGenre(), null);
@@ -227,7 +230,7 @@ public class AddDialogModelManagedBean implements Serializable {
     }
 
     public boolean createTrackP() {
-        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createTrackP track mode ={0}", trackCreate);
+        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU CREATE TRACKP track mode ={0}", trackCreate);
         return trackCreate;
     }
 
@@ -306,6 +309,7 @@ public class AddDialogModelManagedBean implements Serializable {
 
     public void newAlbumEventHandler() {
         albumCreate = true;
+        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU newAlbumEventHandler call");
     }
 
     public void newMoodEventHandler() {
@@ -466,5 +470,10 @@ public class AddDialogModelManagedBean implements Serializable {
             musician = new MusicianModel(-1, "", "");
             showed = true;
         }
+    }
+    
+    public void moodSelectHandler(SelectEvent event) {
+        moodCreate = false;
+        moodCreated = false;
     }
 }

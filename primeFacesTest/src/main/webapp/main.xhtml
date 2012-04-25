@@ -66,6 +66,34 @@ and open the template in the editor.
                 float: left;
                 padding-right: 17px;
             }
+
+            li.ui-autocomplete-token {
+                width: 290pt;
+            }
+
+            .mainpanelGrid {
+                width:309pt;
+                border:0px none !important;
+                margin: auto;
+            }
+
+            .tableColumn1 {
+                width:60pt;
+            }
+
+            .tableColumn2 {
+                width:81%;
+                padding-right: 0pt;
+            }
+
+            .ui-inputfield {
+                width:100%;
+            }
+
+            .ui-panelgrid td {
+                border:0px none !important;
+                border-style: none;
+            } 
         </style>
     </h:head>
 
@@ -79,8 +107,8 @@ and open the template in the editor.
                         <p:commandButton value="Search" update="basictable" action="#{controllerManagedBean.search()}"/>
                     </h:panelGrid>
                     <h:panelGrid columns="2" cellpadding="5" styleClass="centered">
-                        <p:commandLink value="Top 20 Groups" update="topGroupsdialog" oncomplete="topGroupsDialog.show()"/>
-                        <p:commandLink value="Top 20 Albums" update="topAlbumssdialog" oncomplete="topAlbumssdialog.show()"/>
+                        <p:commandLink value="Top 20 Groups" update=":topGroupsdialog" oncomplete="topGroupsDialog.show()"/>
+                        <p:commandLink value="Top 20 Albums" update=":topAlbumssdialog" oncomplete="topAlbumssdialog.show()"/>
                     </h:panelGrid>
                 </p:layoutUnit>
 
@@ -92,7 +120,7 @@ and open the template in the editor.
                                           scrollHeight="505" scrollable="true">  
                                 <f:facet name="header">
                                     <p:commandButton id="addTrackButton" value="Add" icon="ui-icon-squaresmall-plus"  
-                                                     update=":form:addisplay" oncomplete="addDialog.show()" action="#{addDialogModelManagedBean.modeTrack()}"/>  
+                                                     update=":addDialogForm:addisplay" oncomplete="addDialog.show()" onclick="#{addDialogModelManagedBean.modeTrack()}"/>  
                                     <p:commandButton id="editButton" value="Edit" icon="ui-icon-pencil"  
                                                      action="#{controllerManagedBean.edit}" ajax="false"/>
                                     <p:commandButton id="deleteButton" value="Delete" icon="ui-icon-pencil"  
@@ -116,12 +144,12 @@ and open the template in the editor.
 
                                 <p:column style="width: 200px">  
                                     <f:facet name="header">Rate</f:facet>  
-                                    <h:outputText value="#{row.avrrate}">
+                                    <h:outputText value="#{row.avrrate}" id="avgRate">
                                         <f:convertNumber pattern = "##,##"/>
                                     </h:outputText> 
                                     <p:rating value="#{row.rate}" >
                                         <f:attribute name="trackId" value="#{row.trackId}"/>
-                                        <p:ajax event="rate"  update="basictable" immediate="true" listener="#{controllerManagedBean.rateTrack}"/>                                       
+                                        <p:ajax event="rate" update="avgRate"  listener="#{controllerManagedBean.rateTrack}"/>                                       
                                     </p:rating>
                                 </p:column>
 
@@ -138,62 +166,63 @@ and open the template in the editor.
                         </p:layoutUnit>
                     </p:layout>                                    
                 </p:layoutUnit>
-            </p:layout>
+            </p:layout>            
+        </h:form> 
 
-            <p:dialog id="adddialog" header="Track Detail" widgetVar="addDialog" resizable="false" closable="false"
-                      width="600" height="400" showEffect="fade" hideEffect="fade" modal="true">  
+        <p:dialog id="adddialog" header="Track Detail" widgetVar="addDialog" resizable="false" closable="false"
+                  width="600" height="400" showEffect="fade" hideEffect="fade" modal="true">  
+            <h:form id="addDialogForm">
                 <h:panelGrid id="addisplay"  styleClass="nestedUnit"> 
-
                     <p:panel id="trackPanel" header="Track #{addDialogModelManagedBean.track.name}" rendered="#{addDialogModelManagedBean.createTrackP()}">  
-                        <h:panelGrid columns="3" style="width:100%">  
+                        <p:panelGrid styleClass="mainpanelGrid">  
+                            <p:row>
+                                <p:column styleClass="tableColumn1">
+                                    <h:outputText value="Name"/>   
+                                </p:column>
+                                <p:column styleClass="tableColumn2">
+                                    <p:inputText id="trackNameInput" value="#{addDialogModelManagedBean.track.name}" />
+                                </p:column>
+                                <p:column/>
+                            </p:row>
 
-                            <h:column>
-                                <h:outputText value="Name"/>   
-                            </h:column>
-                            <h:column colspan="2">
-                                <p:inputText id="trackNameInput" value="#{addDialogModelManagedBean.track.name}" />
-                            </h:column>
-                            <h:column/>
+                            <p:row>
+                                <p:column styleClass="tableColumn1">
+                                    <h:outputText value="Album" /> 
+                                </p:column>
+                                <p:column styleClass="tableColumn2">
+                                    <p:autoComplete id="trackAlbum" 
+                                                    completeMethod="#{addDialogModelManagedBean.completeAlbums}" 
+                                                    value="#{addDialogModelManagedBean.album}"
+                                                    var="a" itemLabel="#{a.name}" itemValue="#{a}"
+                                                    converter="albumConverter" 
+                                                    forceSelection="true" required="true">
+                                        <p:ajax event="itemSelect" update="trackAlbum"/>
+                                    </p:autoComplete>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton id="newAlbumButton"  value="+" update="addisplay" action="#{addDialogModelManagedBean.newAlbumEventHandler()}"/>
+                                </p:column>
+                            </p:row>
 
-
-
-                            <h:column>
-                                <h:outputText value="Album" /> 
-                            </h:column>
-                            <h:column>
-                                <p:autoComplete id="trackAlbum" dropdown="true" 
-                                                completeMethod="#{addDialogModelManagedBean.completeAlbums}" 
-                                                value="#{addDialogModelManagedBean.album}"
-                                                var="a" itemLabel="#{a.name}" itemValue="#{a}"
-                                                converter="albumConverter" 
-                                                forceSelection="true" immediate="true" required="true">
-                                    <p:ajax event="itemSelect" update="trackAlbum"/>
-                                </p:autoComplete>
-                            </h:column>
-                            <h:column>
-                                <p:commandButton id="newAlbumButton" value="+" update="addisplay" action="#{addDialogModelManagedBean.newAlbumEventHandler()}"/>
-                            </h:column>
-
-
-
-                            <p:column>
-                                <h:outputText value="Mood" />
-                            </p:column>
-                            <p:column>
-                                <p:autoComplete id="trackMood" dropdown="true" 
-                                                completeMethod="#{addDialogModelManagedBean.completeMoods}" 
-                                                value="#{addDialogModelManagedBean.mood}"
-                                                var="a" itemLabel="#{a.name}" itemValue="#{a}"
-                                                converter="moodConverter" 
-                                                forceSelection="true" immediate="true" required="true">
-                                    <p:ajax event="itemSelect" update="trackMood"/>
-                                </p:autoComplete>
-                            </p:column>
-                            <p:column>
-                                <p:commandButton id="newMoodButton" value="+" update="addisplay" action="#{addDialogModelManagedBean.newMoodEventHandler()}"/>
-                            </p:column>
-
-                        </h:panelGrid>  
+                            <p:row>
+                                <p:column styleClass="tableColumn1">
+                                    <h:outputText value="Mood" />
+                                </p:column>
+                                <p:column styleClass="tableColumn2">
+                                    <p:autoComplete id="trackMood" 
+                                                    completeMethod="#{addDialogModelManagedBean.completeMoods}" 
+                                                    value="#{addDialogModelManagedBean.mood}"
+                                                    var="a" itemLabel="#{a.name}" itemValue="#{a}"
+                                                    converter="moodConverter" 
+                                                    forceSelection="true" immediate="true" required="true">
+                                        <p:ajax event="itemSelect" update="trackMood moodPanel"/>
+                                    </p:autoComplete>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton id="newMoodButton" value="+" update="moodPanel" action="#{addDialogModelManagedBean.newMoodEventHandler()}"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>  
                     </p:panel> 
 
                     <p:panel id="albumPanel" header="Album #{addDialogModelManagedBean.album.name}" rendered="#{addDialogModelManagedBean.createAlbumP()}">  
@@ -330,28 +359,29 @@ and open the template in the editor.
 
                     <p:panel id="commandPanel" name="footer">  
                         <p:commandButton id="createButton" update="addisplay" value="#{addDialogModelManagedBean.createUpdateButtonName}" action="#{addDialogModelManagedBean.createUpdate()}"/>                        
-                        <p:commandButton id="backButton"   update="basictable"   value="Back"   action="#{addDialogModelManagedBean.backEventHandler()}"  oncomplete="addDialog.hide()" />  
+                        <p:commandButton id="backButton"   update=":form:basictable"   value="Back"   action="#{addDialogModelManagedBean.backEventHandler()}"  oncomplete="addDialog.hide()" />  
                     </p:panel>
                 </h:panelGrid>  
-            </p:dialog>
+            </h:form>
+        </p:dialog>
 
-            <p:dialog id="topGroupsdialog" header="Top 20 Groups" widgetVar="topGroupsDialog" styleClass="text-align: left;" showEffect="fade" hideEffect="fade" width="600">
-                <p:dataList value="#{controllerManagedBean.searchTopGroups()}" var="group" type="ordered" styleClass="text-align: left;">
-                    #{group.key}, 
-                    <h:outputText value="#{group.value}">
-                        <f:convertNumber pattern = "##,##"/>
-                    </h:outputText>
-                </p:dataList>
-            </p:dialog>
+        <p:dialog id="topGroupsdialog" header="Top 20 Groups" widgetVar="topGroupsDialog" styleClass="text-align: left;" showEffect="fade" hideEffect="fade" width="600">
+            <p:dataList value="#{controllerManagedBean.searchTopGroups()}" var="group" type="ordered" styleClass="text-align: left;">
+                #{group.key}, 
+                <h:outputText value="#{group.value}">
+                    <f:convertNumber pattern = "##,##"/>
+                </h:outputText>
+            </p:dataList>
+        </p:dialog>
 
-            <p:dialog id="topAlbumssdialog" header="Top 20 Albums" widgetVar="topAlbumssdialog" styleClass="text-align: left;" showEffect="fade" hideEffect="fade" width="600">
-                <p:dataList value="#{controllerManagedBean.searchTopAlbums()}" var="album" type="ordered" styleClass="text-align: left;">
-                    #{album.key}, 
-                    <h:outputText value="#{album.value}">
-                        <f:convertNumber pattern = "##,##"/>
-                    </h:outputText>
-                </p:dataList>
-            </p:dialog>
-        </h:form>            
+        <p:dialog id="topAlbumssdialog" header="Top 20 Albums" widgetVar="topAlbumssdialog" styleClass="text-align: left;" showEffect="fade" hideEffect="fade" width="600">
+            <p:dataList value="#{controllerManagedBean.searchTopAlbums()}" var="album" type="ordered" styleClass="text-align: left;">
+                #{album.key}, 
+                <h:outputText value="#{album.value}">
+                    <f:convertNumber pattern = "##,##"/>
+                </h:outputText>
+            </p:dataList>
+
+        </p:dialog>           
     </h:body>
 </html>

@@ -159,7 +159,6 @@ public class RateBean implements EntityBean {
                 throw new ObjectNotFoundException("...");
             }
 
-            //throw new EJBException("Primary key = " + aKey + "id " + id + " name " + name);
             return aKey;
         } catch (SQLException e) {
             throw new EJBException("Ошибка SELECT\n" + "Key = " + aKey + e.getMessage());
