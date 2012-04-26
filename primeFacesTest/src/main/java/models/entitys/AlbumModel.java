@@ -5,8 +5,11 @@
 package models.entitys;
 
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
+import models.pages.AddDialogModelManagedBean;
 
 /**
  *
@@ -24,6 +27,7 @@ public class AlbumModel implements Serializable {
     }
 
     public void setGroup(long group) {
+        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU SETTER ALBUM call group id" + group);
         this.group = group;
     }
 
@@ -32,10 +36,12 @@ public class AlbumModel implements Serializable {
     }
 
     public void setId(long id) {
+        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU SETTER ALBUM call id" + id);
         this.id = id;
     }
 
     public void setName(String name) {
+        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU SETTER ALBUM call name" + name);
         this.name = name;
     }
 

@@ -150,7 +150,7 @@ public class AlbumBean implements EntityBean {
             statement.setLong(3, genre);
             statement.setLong(4, id);
             Logger.getLogger(AlbumBean.class.getName()).log(Level.INFO, "VLEU AlbumBean ejbStore Executing query: " + query);
-            statement.executeQuery();
+            statement.executeUpdate();
             Logger.getLogger(AlbumBean.class.getName()).log(Level.INFO, "VLEU AlbumBean ejbStore Album id: " + this.id + " name: " + this.name + " stored.");
         } catch (SQLException e) {
             Logger.getLogger(AlbumBean.class.getName()).log(Level.WARNING, "Album id: " + this.id + " name: " + this.name + " NOT stored!");
@@ -267,9 +267,10 @@ public class AlbumBean implements EntityBean {
         PreparedStatement statement = null;
         String query = "";
         try {
-            connection = dataSource.getConnection();
+            connection = dataSource.getConnection();            
             query = "SELECT album_id.NEXTVAL FROM dual";            
-            ResultSet result = statement.executeQuery(query);
+            statement = connection.prepareStatement(query);
+            ResultSet result = statement.executeQuery();
             if (result.next()) {
                 long newId = result.getLong(1);
                 Logger.getLogger(AlbumBean.class.getName()).log(Level.INFO, "VLEU AlbumBean ejbCreate newId: " + newId + "Executed query: " + query);
@@ -280,8 +281,7 @@ public class AlbumBean implements EntityBean {
                 statement.setString(2, name);
                 statement.setLong(3, groupId);
                 statement.setLong(4, genreId);
-                statement.executeQuery();
-                connection.commit();
+                statement.execute();
                 this.id = newId; //????? Bean life cycle misunderstanding!
                 return Long.valueOf(newId);
             }

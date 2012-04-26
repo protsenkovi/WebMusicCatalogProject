@@ -150,17 +150,21 @@ public class TrackBean implements EntityBean {
      */
     public void ejbStore() {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            String query = "UPDATE tracks SET name = '" + this.name + "', album = " + this.album + ", mood = " + this.mood + " WHERE id = " + this.id;
+            String query = "UPDATE tracks SET name = ?, album = ?, mood = ? WHERE id = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, name);
+            statement.setLong(2, album);
+            statement.setInt(3, mood);
+            statement.setLong(4, id);
             Logger.getLogger(TrackBean.class.getName()).log(Level.INFO, "VLEU TrackBean ejbStore Executing query: " + query);
-            statement.executeQuery(query);
+            statement.executeUpdate();
             Logger.getLogger(TrackBean.class.getName()).log(Level.INFO, "VLEU TrackBean ejbStore Track id: " + this.id + " name: " + this.name + " mood: " + this.mood + " stored.");
         } catch (SQLException e) {
             Logger.getLogger(TrackBean.class.getName()).log(Level.WARNING, "Track id: " + this.id + " name: " + this.name + " mood: " + this.mood + " NOT stored!");
-            throw new EJBException("ejbStore SELECT\n" + e.getMessage());
+            throw new EJBException("ejbStore SELECT \n" + e.getMessage());
         } finally {
             closeConnection(connection, statement);
         }
@@ -274,20 +278,24 @@ public class TrackBean implements EntityBean {
 
     public Long ejbCreate(String name, Long albumId, Integer mood) {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         String query = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
             query = "SELECT track_id.NEXTVAL FROM dual";
+            statement = connection.prepareStatement(query);
             ResultSet result = statement.executeQuery(query);
             if (result.next()) {
                 long newId = result.getLong(1);
                 Logger.getLogger(TrackBean.class.getName()).log(Level.INFO, "VLEU TrackBean ejbCreate newId: " + newId + "Executed query: " + query);
                 query = "INSERT INTO tracks (id, name, album, mood) "
-                      + "VALUES (" + newId + ", '" + name + "' ," + albumId.longValue() + ", " + mood.intValue() + ")";
-                statement.executeQuery(query);
-                connection.commit();
+                      + "VALUES (? ,? ,? ,? )";
+                statement = connection.prepareStatement(query);
+                statement.setLong(1, newId);
+                statement.setString(2, name);
+                statement.setLong(3, albumId.longValue());
+                statement.setInt(4, mood.intValue());
+                statement.execute();
                 this.id = newId; //????? Bean life cycle misunderstanding!
                 return Long.valueOf(newId);
             }
