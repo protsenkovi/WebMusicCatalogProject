@@ -427,31 +427,11 @@ public class AddDialogModelManagedBean implements Serializable {
     }
 
     public String getCreateUpdateButtonName() {
-//        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU getCreateUpdateButtonName !(trackCreate ^ trackCreated) ={0}", !(trackCreate ^ trackCreated));
-//        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU getCreateUpdateButtonName !(albumCreate ^ albumCreated) ={0}", !(albumCreate ^ albumCreated));
-//        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU getCreateUpdateButtonName !(groupCreate ^ groupCreated) ={0}", !(groupCreate ^ groupCreated));
-//        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU getCreateUpdateButtonName !(moodCreate ^ moodCreated) ={0}", !(moodCreate ^ moodCreated));
-//        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU getCreateUpdateButtonName !(memberCreate ^ memberCreated) ={0}", !(memberCreate ^ memberCreated));
-//        Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU getCreateUpdateButtonName !(genreCreate ^ genreCreated) ={0}", !(genreCreate ^ genreCreated));
-//        if (!(trackCreate ^ trackCreated)
-//                && !(albumCreate ^ albumCreated)
-//                && !(groupCreate ^ groupCreated)
-//                && !(moodCreate ^ moodCreated)
-//                && !(memberCreate ^ memberCreated)
-//                && !(genreCreate ^ genreCreated)) {
-//            return "Update";
-//        } else {
-//            if ((trackCreate ^ trackCreated)
-//                    || (albumCreate ^ albumCreated)
-//                    || (groupCreate ^ groupCreated)
-//                    || (moodCreate ^ moodCreated)
-//                    || (memberCreate ^ memberCreated)
-//                    || (genreCreate ^ genreCreated)) {
-//                return "Create and Update";
-//            } else {
-        return "Create";
-//            }
-//        }
+        if ((!trackCreate || trackCreated) && (!albumCreate || albumCreated) && (!groupCreate || groupCreated) && 
+            (! genreCreate || genreCreated) && (!memberCreate || memberCreated) && (!moodCreate || moodCreated)) 
+            return "Update";
+        else 
+            return "Create";
     }
 
     private void resetPageModel() {
@@ -483,6 +463,14 @@ public class AddDialogModelManagedBean implements Serializable {
     public void albumSelectHandler(SelectEvent event) {
         albumCreate = false;
         albumCreated = false;
+        genreCreate = false;
+        genreCreated = false;
+        groupCreate = false;
+        groupCreated = false;
+        memberCreate = false;
+        memberCreated = false;
+        group = new GroupModel(-1, "");
+        genre = new GenreModel(-1, "");
     }
 
     public void moodSelectHandler(SelectEvent event) {
@@ -493,6 +481,8 @@ public class AddDialogModelManagedBean implements Serializable {
     public void groupSelectHandler(SelectEvent event) {
         groupCreate = false;
         groupCreated = false;
+        memberCreate = false;
+        memberCreated = false;
     }
 
     public void genreSelectHandler(SelectEvent event) {

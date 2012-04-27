@@ -10,7 +10,7 @@ and open the template in the editor.
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=windows-1251"/>
-        <title>Why are you not working?</title>
+        <title>Web Music Catalog</title>
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/style.css" />
         <style type="text/css">
             .nestedUnit {
@@ -110,6 +110,10 @@ and open the template in the editor.
                 border:0px none !important;
                 border-style: none;
             } 
+            
+            .panelPadding td{
+                padding: 10px 4px 10px 4px;
+            }
 
             .addDialogStyle {
                 position: absolute;
@@ -191,9 +195,11 @@ and open the template in the editor.
             </p:layout>            
         </h:form> 
 
-        <p:dialog id="adddialog" header="Add dialog" widgetVar="addDialog" closable="false" styleClass="addDialogStyle" 
-                  showEffect="fade" hideEffect="fade" modal="true">  
-            <h:form id="addDialogForm">
+        <h:form id="addDialogForm">
+            <p:growl id="growl" showDetail="true" />
+            
+            <p:dialog id="adddialog" header="Add dialog" widgetVar="addDialog" closable="false" styleClass="addDialogStyle" 
+                      showEffect="fade" hideEffect="fade" modal="true">                 
                 <p:panelGrid id="addisplay"  styleClass="nestedUnit"> 
                     <p:row>
                         <p:column>
@@ -204,7 +210,7 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="trackNameInput" value="#{addDialogModelManagedBean.track.name}" />
+                                            <p:inputText id="trackNameInput" value="#{addDialogModelManagedBean.track.name}" required="true" requiredMessage="Name is required."/>
                                         </p:column>
                                         <p:column/>
                                     </p:row>
@@ -218,14 +224,14 @@ and open the template in the editor.
                                                             completeMethod="#{addDialogModelManagedBean.completeAlbums}" 
                                                             value="#{addDialogModelManagedBean.album}"
                                                             var="a" itemLabel="#{a.name}" itemValue="#{a}"
-                                                            converter="albumConverter" immediate=""
+                                                            converter="albumConverter" 
                                                             forceSelection="true" required="true"> 
-                                                <p:ajax event="itemSelect"  process="@this, albumPanel" update="albumPanel" listener="#{addDialogModelManagedBean.albumSelectHandler}"/>
+                                                <p:ajax event="itemSelect"  process="@this, albumPanel, genrePanel, groupPanel, memberPanel, createButton" update="albumPanel genrePanel groupPanel memberPanel, createButton" listener="#{addDialogModelManagedBean.albumSelectHandler}"/>
                                                 <p:ajax event="blur" process="@this, trackAlbum" update="trackAlbum" />
                                             </p:autoComplete>
                                         </p:column>
                                         <p:column>
-                                            <p:commandButton id="newAlbumButton"  value="+" process="@this, albumPanel, trackAlbum" update="albumPanel trackAlbum" action="#{addDialogModelManagedBean.newAlbumEventHandler()}"/>
+                                            <p:commandButton id="newAlbumButton"  value="+" process="@this, albumPanel, trackAlbum, createButton" update="albumPanel trackAlbum createButton" action="#{addDialogModelManagedBean.newAlbumEventHandler()}"/>
                                         </p:column>
                                     </p:row>
 
@@ -240,12 +246,12 @@ and open the template in the editor.
                                                             var="a" itemLabel="#{a.name}" itemValue="#{a}"
                                                             converter="moodConverter" 
                                                             forceSelection="true" required="true">
-                                                <p:ajax event="itemSelect" process="@this, moodPanel" update="moodPanel" listener="#{addDialogModelManagedBean.moodSelectHandler}"/>
+                                                <p:ajax event="itemSelect" process="@this, moodPanel, createButton" update="moodPanel createButton" listener="#{addDialogModelManagedBean.moodSelectHandler}"/>
                                                 <p:ajax event="blur" update="trackMood" />
                                             </p:autoComplete>
                                         </p:column>
                                         <p:column>
-                                            <p:commandButton id="newMoodButton" value="+" process="@this, moodPanel, trackMood" update="moodPanel trackMood" action="#{addDialogModelManagedBean.newMoodEventHandler()}"/>
+                                            <p:commandButton id="newMoodButton" value="+" process="@this, moodPanel, trackMood, createButton" update="moodPanel trackMood createButton" action="#{addDialogModelManagedBean.newMoodEventHandler()}"/>
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>  
@@ -260,7 +266,7 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="albumNameInput" value="#{addDialogModelManagedBean.album.name}" >
+                                            <p:inputText id="albumNameInput" value="#{addDialogModelManagedBean.album.name}" required="true">
                                                 <p:ajax event="keyup" process="@this, trackAlbum" update="trackAlbum"/>
                                             </p:inputText>
                                         </p:column>
@@ -278,12 +284,12 @@ and open the template in the editor.
                                                             var="a" itemLabel="#{a.name}" itemValue="#{a}"
                                                             converter="groupConverter" 
                                                             forceSelection="true" required="true">
-                                                <p:ajax event="itemSelect" process="@this, groupPanel" update="groupPanel" listener="#{addDialogModelManagedBean.groupSelectHandler}"/>
+                                                <p:ajax event="itemSelect" process="@this, groupPanel, createButton" update="groupPanel createButton" listener="#{addDialogModelManagedBean.groupSelectHandler}"/>
                                                 <p:ajax event="blur" update="albumGroup" />
                                             </p:autoComplete>
                                         </p:column>
                                         <p:column>
-                                            <p:commandButton id="newGroupButton" value="+" process="@this, groupPanel, albumGroup" update="groupPanel albumGroup" actionListener="#{addDialogModelManagedBean.newGroupEventHandler()}"/>
+                                            <p:commandButton id="newGroupButton" value="+" process="@this, groupPanel, albumGroup, createButton" update="groupPanel albumGroup createButton" actionListener="#{addDialogModelManagedBean.newGroupEventHandler()}"/>
                                         </p:column>
                                     </p:row>
 
@@ -298,12 +304,12 @@ and open the template in the editor.
                                                             var="a" itemLabel="#{a.name}" itemValue="#{a}"
                                                             converter="genreConverter" 
                                                             forceSelection="true" required="true">
-                                                <p:ajax event="itemSelect" process="@this, genrePanel" update="genrePanel" listener="#{addDialogModelManagedBean.genreSelectHandler}"/>
+                                                <p:ajax event="itemSelect" process="@this, genrePanel, createButton" update="genrePanel createButton" listener="#{addDialogModelManagedBean.genreSelectHandler}"/>
                                                 <p:ajax event="blur" update="albumGenre" />
                                             </p:autoComplete>
                                         </p:column>
                                         <p:column>
-                                            <p:commandButton id="newGenreButton" value="+" process="@this, genrePanel, albumGenre" update="genrePanel albumGenre" actionListener="#{addDialogModelManagedBean.newGenreEventHandler()}"/>
+                                            <p:commandButton id="newGenreButton" value="+" process="@this, genrePanel, albumGenre, createButton" update="genrePanel albumGenre createButton" actionListener="#{addDialogModelManagedBean.newGenreEventHandler()}"/>
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>  
@@ -318,7 +324,7 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="groupNameInput" value="#{addDialogModelManagedBean.group.name}" >
+                                            <p:inputText id="groupNameInput" value="#{addDialogModelManagedBean.group.name}" required="true">
                                                 <p:ajax event="keyup" update="albumGroup"/>
                                             </p:inputText>
                                         </p:column>
@@ -342,7 +348,7 @@ and open the template in the editor.
                                             </p:autoComplete>
                                         </p:column>
                                         <p:column>
-                                            <p:commandButton id="newMemberButton" value="+" update="addisplay" action="#{addDialogModelManagedBean.newMemberEventHandler()}"/>
+                                            <p:commandButton id="newMemberButton" value="+" process="@this, memberPanel, createButton" update="memberPanel createButton" actionListener="#{addDialogModelManagedBean.newMemberEventHandler()}"/>
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>  
@@ -359,7 +365,7 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="MoodNameInput" value="#{addDialogModelManagedBean.mood.name}" >
+                                            <p:inputText id="MoodNameInput" value="#{addDialogModelManagedBean.mood.name}" required="true">
                                                 <p:ajax event="keyup" update="trackMood"/>
                                             </p:inputText>
                                         </p:column>
@@ -385,7 +391,7 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="genreNameInput" value="#{addDialogModelManagedBean.genre.name}" >
+                                            <p:inputText id="genreNameInput" value="#{addDialogModelManagedBean.genre.name}" required="true">
                                                 <p:ajax event="keyup" update="albumGenre"/>
                                             </p:inputText>
                                         </p:column>
@@ -401,7 +407,7 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="memberNameInput" value="#{addDialogModelManagedBean.musician.name}" />
+                                            <p:inputText id="memberNameInput" value="#{addDialogModelManagedBean.musician.name}" required="true"/>
                                         </p:column>
                                     </p:row>
 
@@ -421,17 +427,15 @@ and open the template in the editor.
                     <p:row>
                         <p:column colspan="3">
                             <p:panelGrid id="commandPanel" columns="2" name="footer" styleClass="bottomMenu">  
-                                <p:commandButton styleClass="bottomButtons" id="backButton"   update=":form:basictable"   value="Back"   actionListener="#{addDialogModelManagedBean.backEventHandler()}"  oncomplete="addDialog.hide()" />  
-                                <p:commandButton styleClass="bottomButtons" id="createButton" update="addisplay" value="#{addDialogModelManagedBean.createUpdateButtonName}" action="#{addDialogModelManagedBean.createUpdate()}"/>                        
+                                <p:commandButton styleClass="bottomButtons" id="backButton"   update=":form:basictable" immediate="true"  value="Back"   actionListener="#{addDialogModelManagedBean.backEventHandler()}"  oncomplete="addDialog.hide()" />  
+                                <p:commandButton styleClass="bottomButtons" id="createButton" update="addisplay growl" process="@form" ajax="true" value="#{addDialogModelManagedBean.createUpdateButtonName}" action="#{addDialogModelManagedBean.createUpdate()}"/>                        
                             </p:panelGrid>
                         </p:column>
                     </p:row>
                 </p:panelGrid>  
-                
-                <p:growl id="growl" showDetail="true" />
-            </h:form>
-        </p:dialog>
-
+            </p:dialog>
+        </h:form>
+        
         <p:dialog id="topGroupsdialog" header="Top 20 Groups" widgetVar="topGroupsDialog" styleClass="text-align: left;" showEffect="fade" hideEffect="fade" width="600">
             <p:dataList value="#{controllerManagedBean.searchTopGroups()}" var="group" type="ordered" styleClass="text-align: left;">
                 #{group.key}
