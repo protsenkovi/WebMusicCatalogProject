@@ -4,6 +4,7 @@
  */
 package com.mycompany.bmp;
 
+import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -121,12 +122,14 @@ public class GenreBean implements EntityBean {
      */
     public void ejbStore() {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            String query = "UPDATE genres SET name = '" + this.name + "'  WHERE id = " + this.id;
-            ResultSet resultSet = statement.executeQuery(query);
+            String query = "UPDATE genres SET name = ? WHERE id = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, name);
+            statement.setLong(2, id.longValue());
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new EJBException("Ошибка SELECT\n" + e.getMessage());
         } finally {
@@ -239,20 +242,22 @@ public class GenreBean implements EntityBean {
     
     public Long ejbCreate(String name) {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         String query = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
             query = "SELECT genre_id.NEXTVAL FROM dual";
-            ResultSet result = statement.executeQuery(query);
+            statement = connection.prepareStatement(query);
+            ResultSet result = statement.executeQuery();
             if (result.next()) {
                 long newId = result.getLong(1);
-                Logger.getLogger(TrackBean.class.getName()).log(Level.INFO, "VLEU GenreBean ejbCreate newId: " + newId + "Executed query: " + query);
+                Logger.getLogger(TrackBean.class.getName()).log(Level.INFO, "VLEU GenreBean ejbCreate newId: " + newId + " Executed query: " + query);
                 query = "INSERT INTO genres (id, name) "
-                        + "VALUES (" + newId + ", '" + name + "')";
-                statement.executeQuery(query);
-                connection.commit();
+                        + "VALUES (?, ?)";
+                statement = connection.prepareStatement(query);
+                statement.setLong(1, newId);
+                statement.setString(2, name);
+                statement.executeUpdate();
                 this.id = Long.valueOf(newId); //????? Bean life cycle misunderstanding!
                 return Long.valueOf(newId);
             }

@@ -129,18 +129,21 @@ public class MemberBean implements EntityBean {
      * @see javax.ejb.EntityBean#ejbStore()
      */
     public void ejbStore() {
-//        Connection connection = null;
-//        Statement statement = null;
-//        try {
-//            connection = dataSource.getConnection();
-//            statement = connection.createStatement();
-//            String query = "UPDATE musicians SET name = '" + this.name + "', link = " + this.link +  " WHERE id = " + this.id;
-//            ResultSet resultSet = statement.executeQuery(query);
-//        } catch (SQLException e) {
-//            throw new EJBException("ejb Store MemberBean SELECT\n" + e.getMessage());
-//        } finally {
-//            closeConnection(connection, statement);
-//        }
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            String query = "UPDATE musicians SET name = ?, link = ? WHERE id = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, name);
+            statement.setString(2, link);
+            statement.setLong(3, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new EJBException("ejb Store MemberBean SELECT\n" + e.getMessage());
+        } finally {
+            closeConnection(connection, statement);
+        }
     }
 
     // </editor-fold>
@@ -268,20 +271,23 @@ public class MemberBean implements EntityBean {
 
     public Long ejbCreate(String name, String link) {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         String query = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
             query = "SELECT musician_id.NEXTVAL FROM dual";
-            ResultSet result = statement.executeQuery(query);
+            statement = connection.prepareStatement(query);
+            ResultSet result = statement.executeQuery();
             if (result.next()) {
                 long newId = result.getLong(1);
                 Logger.getLogger(TrackBean.class.getName()).log(Level.INFO, "VLEU MemberBean ejbCreate newId: " + newId + "Executed query: " + query);
                 query = "INSERT INTO musicians (id, name, link) "
-                        + "VALUES (" + newId + ", '" + name + "', '" + link + "')";
-                statement.executeQuery(query);
-                connection.commit();
+                        + "VALUES (?, ?, ?)";
+                statement = connection.prepareStatement(query);
+                statement.setLong(1, newId);
+                statement.setString(2, name);
+                statement.setString(3, link);
+                statement.executeUpdate();
                 this.id = newId; //????? Bean life cycle misunderstanding!
                 return Long.valueOf(newId);
             }

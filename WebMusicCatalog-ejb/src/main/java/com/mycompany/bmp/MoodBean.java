@@ -120,12 +120,14 @@ public class MoodBean implements EntityBean {
      */
     public void ejbStore() {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            String query = "UPDATE moods SET name = '" + this.name + "'  WHERE value = " + this.value;
-            ResultSet resultSet = statement.executeQuery(query);
+            String query = "UPDATE moods SET name = ? WHERE value = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, name);
+            statement.setInt(2, value);
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new EJBException("ejbStore SELECT\n" + e.getMessage());
         } finally {
@@ -240,14 +242,15 @@ public class MoodBean implements EntityBean {
 
     public Integer ejbCreate(Integer id, String name) {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         String query = "INSERT INTO moods (value, name) "
-                     + "VALUES (" + id.intValue() + ", '" + name + "')";
+                     + "VALUES (?, ?)";
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            statement.executeQuery(query);
-            connection.commit();
+            statement = connection.prepareStatement(query);
+            statement.setInt(1, id.intValue());
+            statement.setString(2, name);
+            statement.executeUpdate();
             this.value = id.intValue();
             return id;
         } catch (SQLException e) {

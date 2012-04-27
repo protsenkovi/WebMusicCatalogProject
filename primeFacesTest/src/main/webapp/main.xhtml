@@ -336,7 +336,7 @@ and open the template in the editor.
                                                             var="member" itemLabel="#{member.name}" 
                                                             itemValue="#{member}" 
                                                             converter="musicianConverter"
-                                                            forceSelection="true" >
+                                                            forceSelection="true" multiple="true">
                                                 <p:ajax event="itemUnselect" update="membersAutoComplete"/>
                                                 <p:ajax event="itemSelect" update="membersAutoComplete"/>
                                             </p:autoComplete>
@@ -427,24 +427,20 @@ and open the template in the editor.
                         </p:column>
                     </p:row>
                 </p:panelGrid>  
+                
+                <p:growl id="growl" showDetail="true" />
             </h:form>
         </p:dialog>
 
         <p:dialog id="topGroupsdialog" header="Top 20 Groups" widgetVar="topGroupsDialog" styleClass="text-align: left;" showEffect="fade" hideEffect="fade" width="600">
             <p:dataList value="#{controllerManagedBean.searchTopGroups()}" var="group" type="ordered" styleClass="text-align: left;">
-                #{group.key}, 
-                <h:outputText value="#{group.value}">
-                    <f:convertNumber pattern = "##,##"/>
-                </h:outputText>
+                #{group.key}
             </p:dataList>
         </p:dialog>
 
         <p:dialog id="topAlbumssdialog" header="Top 20 Albums" widgetVar="topAlbumssdialog" styleClass="text-align: left;" showEffect="fade" hideEffect="fade" width="600">
             <p:dataList value="#{controllerManagedBean.searchTopAlbums()}" var="album" type="ordered" styleClass="text-align: left;">
-                #{album.key}, 
-                <h:outputText value="#{album.value}">
-                    <f:convertNumber pattern = "##,##"/>
-                </h:outputText>
+                #{album.key}
             </p:dataList>
         </p:dialog>           
     </h:body>

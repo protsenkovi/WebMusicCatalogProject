@@ -669,7 +669,7 @@ public class ControllerManagedBean implements Serializable {
             GenreBeanRemoteHome genreHome = (GenreBeanRemoteHome) PortableRemoteObject.narrow(obj, GenreBeanRemoteHome.class);
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: GenreHome = {0}", genreHome);
             if (genreHome != null) {
-                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: genreModel = {0}", genreHome);
+                Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: genreModel = {0}", genreModel);
                 Genre genre = genreHome.findByPrimaryKey(genreModel.getId());
                 Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: genre = {0}", genre.getId());
                 genre.setName(genreModel.getName());

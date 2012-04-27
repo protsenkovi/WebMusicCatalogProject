@@ -58,8 +58,6 @@ public class GroupConverter implements Converter {
             builder.append("<:>");
             builder.append(((GroupModel) value).getName());
             builder.append("<:>");
-            builder.append("list");
-            builder.append("<:>");
             Logger.getGlobal().log(Level.INFO, "VLEU CONVERTER Group getAsString {0}", builder);
             return builder.toString();
         }
