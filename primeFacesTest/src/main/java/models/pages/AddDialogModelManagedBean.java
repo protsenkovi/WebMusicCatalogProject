@@ -172,9 +172,9 @@ public class AddDialogModelManagedBean implements Serializable {
      * Creates a new instance of AddDialogModelManagedBean
      */
     public AddDialogModelManagedBean() {
-        track = new TrackModel(0, "", -1, -1);
-        album = new AlbumModel(-1, "", -1, -1);
-        mood = new MoodModel(-1, "");
+        //track = new TrackModel(0, "", -1, -1);
+        //album = new AlbumModel(-1, "", -1, -1);
+        //mood = new MoodModel(-1, "");
         group = new GroupModel(-1, "");
         musician = new MusicianModel(-1, "", "");
         members = new ArrayList<MusicianModel>();
@@ -317,6 +317,7 @@ public class AddDialogModelManagedBean implements Serializable {
 
     public void newMemberEventHandler() {
         memberCreate = true;
+        musician = new MusicianModel(-1, "", "");
     }
 
     public void newGenreEventHandler() {
@@ -405,6 +406,8 @@ public class AddDialogModelManagedBean implements Serializable {
                 if (newMoodValue != -1) {
                     moodCreated = true;
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Mood " + mood.getName() + " created."));
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Unsuccessful", "Mood " + mood.getName() + " already exists."));
                 }
             } else {
                 controllerManagedBean.updateMood(mood);
@@ -451,11 +454,11 @@ public class AddDialogModelManagedBean implements Serializable {
 
         if (!showed) {
             track = new TrackModel(0, "", -1, -1);
-            album = new AlbumModel(-1, "", -1, -1);
-            mood = new MoodModel(-1, "");
-            group = new GroupModel(-1, "");
-            genre = new GenreModel(-1, "");
-            musician = new MusicianModel(-1, "", "");
+            album = null;
+            mood = null;
+            group = null;
+            genre = null;
+            musician = null;
             showed = true;
         }
     }
@@ -469,8 +472,8 @@ public class AddDialogModelManagedBean implements Serializable {
         groupCreated = false;
         memberCreate = false;
         memberCreated = false;
-        group = new GroupModel(-1, "");
-        genre = new GenreModel(-1, "");
+        group = null;
+        genre = null;
     }
 
     public void moodSelectHandler(SelectEvent event) {

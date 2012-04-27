@@ -466,7 +466,13 @@ public class ControllerManagedBean implements Serializable {
             Object obj = ic.lookup("ejb/MoodBean");
             MoodBeanRemoteHome moodHome = (MoodBeanRemoteHome) PortableRemoteObject.narrow(obj, MoodBeanRemoteHome.class);
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: moodHome = {0}", moodHome);
+            Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU SAVE: m = {0}", moodModel);
             if (moodHome != null) {
+                try {
+                    moodHome.findByPrimaryKey(moodModel.getValue());
+                    return -1;
+                } catch (FinderException ex) {                    
+                }
                 Mood mood = moodHome.create(moodModel.getValue(), moodModel.getName());
                 return mood.getId().intValue();
             } else {
