@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1251"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 To change this template, choose Tools | Templates
 and open the template in the editor.
@@ -9,7 +9,7 @@ and open the template in the editor.
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title>Web Music Catalog</title>
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/style.css" />
         <style type="text/css">
@@ -79,11 +79,15 @@ and open the template in the editor.
             }
 
             li.ui-autocomplete-token {
-                width: 233px;
+                width: 95%;
+            }
+            
+            .ui-autocomplete-multiple {
+                margin-right: -8px;
             }
 
             .mainpanelGrid {
-                width:309pt;
+                width:300pt;
                 height: 100pt;
                 border:0px none !important;
                 margin: auto;
@@ -94,7 +98,7 @@ and open the template in the editor.
             }
 
             .tableColumn2 {
-                width:81%;
+                width:79%;
                 padding-right: 0pt;
             }
 
@@ -196,7 +200,7 @@ and open the template in the editor.
         </h:form> 
 
         <h:form id="addDialogForm">
-            <p:growl id="growl" showDetail="true" />
+            <p:growl id="growl"  showSummary="false" showDetail="true"/>
             
             <p:dialog id="adddialog" header="Add dialog" widgetVar="addDialog" closable="false" styleClass="addDialogStyle" 
                       showEffect="fade" hideEffect="fade" modal="true">                 
@@ -210,7 +214,8 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="trackNameInput" value="#{addDialogModelManagedBean.track.name}" required="true" requiredMessage="Track name is required."/>
+                                            <p:inputText id="trackNameInput" value="#{addDialogModelManagedBean.track.name}" 
+                                                         required="true" label="Warning" requiredMessage="Track name is required." /> 
                                         </p:column>
                                         <p:column/>
                                     </p:row>
@@ -333,7 +338,7 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="groupNameInput" value="#{addDialogModelManagedBean.group.name}" required="true">
+                                            <p:inputText id="groupNameInput" value="#{addDialogModelManagedBean.group.name}" required="true" requiredMessage="Group name is required.">
                                                 <p:ajax event="keyup" update="albumGroup"/>
                                                 <p:ajax event="blur" update="albumGroup"/>
                                             </p:inputText>
@@ -375,7 +380,7 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="MoodNameInput" value="#{addDialogModelManagedBean.mood.name}" required="true" requiredMessage="Mood name is required.">
+                                            <p:inputText id="MoodNameInput" value="#{addDialogModelManagedBean.mood.name}" required="true"  requiredMessage="Mood name is required.">
                                                 <p:ajax event="keyup" update="trackMood"/>
                                                 <p:ajax event="blur" update="trackMood"/>
                                             </p:inputText>
@@ -387,7 +392,8 @@ and open the template in the editor.
                                             <h:outputText value="Value"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="MoodValueInput" value="#{addDialogModelManagedBean.mood.value}" required="true" requiredMessage="Mood value is required.">
+                                            <p:inputText id="MoodValueInput" value="#{addDialogModelManagedBean.mood.value}" 
+                                                         required="true" requiredMessage="Mood value is required." label="Mood value" validatorMessage="Mood value should be between 1 and 999.">
                                                 <f:validateLongRange minimum="1" maximum="999" />
                                             </p:inputText>
                                         </p:column>
@@ -404,7 +410,7 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="genreNameInput" value="#{addDialogModelManagedBean.genre.name}" required="true">
+                                            <p:inputText id="genreNameInput" value="#{addDialogModelManagedBean.genre.name}" required="true" requiredMessage="Genre name is required.">
                                                 <p:ajax event="keyup" update="albumGenre"/>
                                                 <p:ajax event="blur" update="albumGenre"/>
                                             </p:inputText>
@@ -421,7 +427,7 @@ and open the template in the editor.
                                             <h:outputText value="Name"/>   
                                         </p:column>
                                         <p:column styleClass="tableColumn2">
-                                            <p:inputText id="memberNameInput" value="#{addDialogModelManagedBean.musician.name}" required="true"/>
+                                            <p:inputText id="memberNameInput" value="#{addDialogModelManagedBean.musician.name}" required="true" requiredMessage="Musician name is required."/>
                                         </p:column>
                                     </p:row>
 
