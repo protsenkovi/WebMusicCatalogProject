@@ -31,6 +31,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 import models.entitys.*;
+import models.pages.MainPageModelManagedBean;
 import org.primefaces.event.RateEvent;
 import org.primefaces.component.datatable.DataTable;
 
@@ -45,6 +46,8 @@ public class ControllerManagedBean implements Serializable {
     private List<BindedModel> maintable;
     private BindedModel[] selectedRows; // why array?
     private Map<Long, Long> rated;
+    @Inject
+    private MainPageModelManagedBean mainPageViewManagedBean;
     @Inject
     private EditPageModelManagedBean editPageViewManagedBean;
     @Inject
@@ -169,8 +172,28 @@ public class ControllerManagedBean implements Serializable {
         return Utils.searchGroupRating();
     }
 
-    public List<Map.Entry<String, Double>> searchTopAlbums() {
+    public List<Map.Entry<String, String>> searchAlbumContent() {
+        BindedModel selectedRow = this.getSelectedRow();
+        if (selectedRow != null)
+            return Utils.searchAlbumContent(selectedRow.getAlbumName());
+        else
+            return null;
+    }
+    
+    public List<String> searchMusicianAlbums(String name) {
+        return Utils.searchMusicianAlbums(name);
+    }
+    
+    public List<Map.Entry<String, Double>> searchRatedAlbums() {
         return Utils.searchAlbumRating();
+    }
+    
+    public List<MusicianModel> searchMusiciansByGenre(Long genreId) {
+        return Utils.searchMusiciansByGenre(genreId);
+    }
+    
+    public List<MusicianModel> searchMusiciansByMood(Integer value) {
+        return Utils.searchMusiciansByMood(value);
     }
 
     public List<MusicianModel> completeMusician(String query, List<MusicianModel> alreadyChoosen) {
@@ -311,6 +334,7 @@ public class ControllerManagedBean implements Serializable {
             Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
         Logger.getLogger(ControllerManagedBean.class.getName()).log(Level.INFO, "VLEU completeMoods: alreadyChoosen: {0}", alreadyChoosen);
+        Logger.getLogger(Utils.class.getName()).log(Level.INFO, "VLEU mood suggestions " + suggestions);
         if (alreadyChoosen != null) {
             suggestions.remove(alreadyChoosen);
         }
