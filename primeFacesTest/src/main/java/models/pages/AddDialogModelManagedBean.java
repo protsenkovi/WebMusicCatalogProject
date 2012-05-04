@@ -339,7 +339,7 @@ public class AddDialogModelManagedBean implements Serializable {
                     this.musician.setId(newMemberId);
                     members.add(musician);
                     memberCreated = true;
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Musician " + musician.getName() + " created."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Исполнитель " + musician.getName() + " создан."));
                 }
                 Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate newMemberId ={0}", newMemberId);
             } else {
@@ -355,7 +355,7 @@ public class AddDialogModelManagedBean implements Serializable {
                 }
                 Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate member ={0}", musician + " members: " + members);
                 controllerManagedBean.updateMusician(musician);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Musician " + musician.getName() + " saved."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Исполнитель " + musician.getName() + " сохранён."));
             }
         }
         if (groupCreate) {
@@ -364,12 +364,12 @@ public class AddDialogModelManagedBean implements Serializable {
                 if (newGroupId != -1) {
                     this.group.setId(newGroupId);
                     groupCreated = true;
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Group " + group.getName() + " created."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Группа " + group.getName() + " сохранена."));
                 }
                 Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate newGroupId ={0}", newGroupId);
             } else {
                 controllerManagedBean.updateGroup(group, members);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Group " + group.getName() + " saved."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Группа " + group.getName() + " сохранена."));
             }
         }
         if (genreCreate) {
@@ -378,12 +378,12 @@ public class AddDialogModelManagedBean implements Serializable {
                 if (newGenreId != -1) {
                     this.genre.setId(newGenreId);
                     genreCreated = true;
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Genre " + genre.getName() + " created."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Жанр " + genre.getName() + " создан."));
                 }
                 Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate newGenreId ={0}", newGenreId);
             } else {
                 controllerManagedBean.updateGenre(genre);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Genre " + genre.getName() + " saved."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Жанр " + genre.getName() + " сохранён."));
             }
         }
         if (albumCreate) {
@@ -392,12 +392,12 @@ public class AddDialogModelManagedBean implements Serializable {
                 if (newAlbumId != -1) {
                     this.album.setId(newAlbumId);
                     albumCreated = true;
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Album " + album.getName() + " created."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Альбом " + album.getName() + " создан."));
                 }
                 Logger.getLogger(AddDialogModelManagedBean.class.getName()).log(Level.INFO, "VLEU createUpdate newAlbumId ={0}", newAlbumId);
             } else {
                 controllerManagedBean.updateAlbum(album, genre, group);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Album " + album.getName() + " saved."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Альбом " + album.getName() + " сохранён."));
             }
         }
         if (moodCreate) {
@@ -405,13 +405,13 @@ public class AddDialogModelManagedBean implements Serializable {
                 newMoodValue = controllerManagedBean.createMood(mood);
                 if (newMoodValue != -1) {
                     moodCreated = true;
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Mood " + mood.getName() + " created."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Настроение " + mood.getName() + " создано."));
                 } else {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Unsuccessful", "Mood " + mood.getName() + " already exists."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Неудачно", "Настроение " + mood.getName() + " существует."));
                 }
             } else {
                 controllerManagedBean.updateMood(mood);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Mood " + mood.getName() + " saved."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Настроение " + mood.getName() + " сохранено."));
             }
         }
         if (trackCreate) {
@@ -420,11 +420,11 @@ public class AddDialogModelManagedBean implements Serializable {
                 if (newTrackId != -1) {
                     this.track.setId(newTrackId);
                     trackCreated = true;
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Track " + track.getName() + " created."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Трек " + track.getName() + " создан."));
                 }
             } else {
                 controllerManagedBean.updateTrack(track, album, mood);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Track " + track.getName() + " saved."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Трек " + track.getName() + " сохранён."));
             }
         }
     }
@@ -432,9 +432,9 @@ public class AddDialogModelManagedBean implements Serializable {
     public String getCreateUpdateButtonName() {
         if ((!trackCreate || trackCreated) && (!albumCreate || albumCreated) && (!groupCreate || groupCreated) && 
             (! genreCreate || genreCreated) && (!memberCreate || memberCreated) && (!moodCreate || moodCreated)) 
-            return "Update";
+            return "Обновить";
         else 
-            return "Create";
+            return "Создать";
     }
 
     private void resetPageModel() {

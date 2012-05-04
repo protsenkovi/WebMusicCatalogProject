@@ -10,7 +10,7 @@ and open the template in the editor.
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>Why are you not working?</title>
+        <title>Каталог музыки : cтраница редактирования</title>
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/style.css" />
         <style type="text/css">
             .nestedUnit {
@@ -77,15 +77,15 @@ and open the template in the editor.
     </h:head>
 
     <h:body>
-        <h1 style="text-align:center;">Web Music Catalog : Edit Page</h1>
+        <h1 style="text-align:center;">Каталог музыки : Страница редактирования</h1>
         <h:form id="form">
             <p:panel styleClass="nestedUnit">
                 <p:panelGrid styleClass="mainpanelGrid" columns="1">
-                    <p:panel id="groupPanel" header="Group #{editPageViewManagedBean.group.name}" styleClass="left">  
+                    <p:panel id="groupPanel" header="Группа #{editPageViewManagedBean.group.name}" styleClass="left">  
                         <p:panelGrid styleClass="width: 100%;">  
                             <p:row>
                                 <p:column styleClass="tableColumn1">
-                                    <h:outputText value="Name"/> 
+                                    <h:outputText value="Название"/> 
                                 </p:column>
                                 <p:column styleClass="tableColumn2">
                                     <p:inputText id="groupNameInput" value="#{editPageViewManagedBean.group.name}" required="true">
@@ -96,7 +96,7 @@ and open the template in the editor.
 
                             <p:row>
                                 <p:column styleClass="tableColumn1">
-                                    <h:outputText value="Musicians"  />
+                                    <h:outputText value="Состав группы"  />
                                 </p:column>
                                 <p:column styleClass="tableColumn2" >
                                     <p:autoComplete id="membersAutoComplete"
@@ -114,11 +114,11 @@ and open the template in the editor.
                         </p:panelGrid>  
                     </p:panel>
 
-                    <p:panel id="albumPanel" header="Album #{editPageViewManagedBean.album.name}" styleClass="left" >  
+                    <p:panel id="albumPanel" header="Альбом #{editPageViewManagedBean.album.name}" styleClass="left" >  
                         <p:panelGrid>  
                             <p:row>
                                 <p:column styleClass="tableColumn1">
-                                    <h:outputText value="Name"/>   
+                                    <h:outputText value="Название"/>   
                                 </p:column>
                                 <p:column styleClass="tableColumn2">
                                     <p:inputText id="albumNameInput" value="#{editPageViewManagedBean.album.name}" required="true">
@@ -129,7 +129,7 @@ and open the template in the editor.
 
                             <p:row>
                                 <p:column styleClass="tableColumn1">
-                                    <h:outputText value="Group" />  
+                                    <h:outputText value="Группа" />  
                                 </p:column>
                                 <p:column styleClass="tableColumn2">
                                     <p:autoComplete id="albumGroups" required="true"
@@ -146,7 +146,7 @@ and open the template in the editor.
 
                             <p:row>
                                 <p:column styleClass="tableColumn1">
-                                    <h:outputText value="Genre" /> 
+                                    <h:outputText value="Жанр" /> 
                                 </p:column>
                                 <p:column styleClass="tableColumn2">
                                     <p:autoComplete id="albumGenre" required="true"
@@ -163,11 +163,11 @@ and open the template in the editor.
                         </p:panelGrid>  
                     </p:panel>
 
-                    <p:panel id="trackPanel" header="Track #{editPageViewManagedBean.track.name}" styleClass="left">  
+                    <p:panel id="trackPanel" header="Трек #{editPageViewManagedBean.track.name}" styleClass="left">  
                         <p:panelGrid>  
                             <p:row>
                                 <p:column styleClass="tableColumn1">
-                                    <h:outputText value="Name"/>   
+                                    <h:outputText value="Название"/>   
                                 </p:column>
                                 <p:column styleClass="tableColumn2" >
                                     <p:inputText id="trackNameInput" value="#{editPageViewManagedBean.track.name}" required="true"/>
@@ -176,7 +176,7 @@ and open the template in the editor.
 
                             <p:row>
                                 <p:column styleClass="tableColumn1">
-                                    <h:outputText value="Album" />  
+                                    <h:outputText value="Альбом" />  
                                 </p:column>
                                 <p:column styleClass="tableColumn2">
                                     <p:autoComplete id="trackAlbums"  required="true"
@@ -193,7 +193,7 @@ and open the template in the editor.
 
                             <p:row>
                                 <p:column styleClass="tableColumn1">
-                                    <h:outputText value="Mood" /> 
+                                    <h:outputText value="Настроение" /> 
                                 </p:column>
                                 <p:column styleClass="tableColumn2">
                                     <p:autoComplete id="trackMood"  required="true"
@@ -210,7 +210,7 @@ and open the template in the editor.
 
                             <p:row>
                                 <p:column styleClass="tableColumn1">
-                                    <h:outputText value="AvgRate"/>   
+                                    <h:outputText value="Рейтинг"/>   
                                 </p:column>
                                 <p:column styleClass="tableColumn2">
                                     <h:outputText id="trackAvgRateLabel" value="#{editPageViewManagedBean.track.avgrate}">
@@ -222,8 +222,8 @@ and open the template in the editor.
                     </p:panel>
 
                     <p:panelGrid styleClass="bottomMenu" columns="2">
-                        <p:commandButton styleClass="bottomButtons" value="Back" action="Main" ajax="false" immediate="true"/>
-                        <p:commandButton styleClass="bottomButtons" id="saveButton" value="Save" actionListener="#{editPageViewManagedBean.saveHandler}" update="growl groupPanel albumPanel trackPanel"/>
+                        <p:commandButton styleClass="bottomButtons" value="Назад" action="Main" ajax="false" immediate="true"/>
+                        <p:commandButton styleClass="bottomButtons" id="saveButton" value="Сохранить" actionListener="#{editPageViewManagedBean.saveHandler}" update="growl groupPanel albumPanel trackPanel"/>
                     </p:panelGrid>
                 </p:panelGrid>
             </p:panel>

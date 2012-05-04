@@ -143,11 +143,11 @@ public class EditPageModelManagedBean implements Serializable {
 
     public void saveHandler(ActionEvent event) {
         controllerManagedBean.updateGroup(group, members);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Group " + group.getName()+ " saved."));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Группа " + group.getName()+ " сохранена."));
         controllerManagedBean.updateAlbum(album, genre, group);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Album " + album.getName()+ " saved."));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Альбом " + album.getName()+ " сохранён."));
         controllerManagedBean.updateTrack(track, album, mood);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Successful", "Track " + track.getName()+ " saved."));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Успешно", "Трек " + track.getName()+ " сохранён."));
     }
     
 //    public void albumValueChanged() {
